@@ -123,32 +123,19 @@ async function main() {
     assert.equal((await q(`SELECT nullif(current_setting('app.organization_id',true),'') IS NULL AS clean`)).rows[0].clean,true);
     await q('ROLLBACK');
     if (!process.argv.includes('--dry-run')) {
-      stage = 'Prisma runtime wrapper and transaction cleanup';
+      stage = 'Prisma runtime rejects DBA impersonation';
       const { PrismaClient } = require('../generated/routemate-client');
       const { PrismaPg } = require('@prisma/adapter-pg');
       const { withRuntimeContext } = require('../runtime-context.cjs');
-      // DBA-authenticated test transport, effective runtime role on every connection.
-      // NOLOGIN roles remain unprovisioned; no password is created or changed.
+      // Phase 3 requires a real separate LOGIN principal, not DBA impersonation.
       const runtime = new PrismaClient({adapter:new PrismaPg({
         connectionString:process.env.DATABASE_URL, options:'-c role=routemate_app', max:1
       })});
       try {
-        const result = await withRuntimeContext(runtime,{organizationId:a},async tx => {
-          const [r] = await tx.$queryRaw`SELECT current_user AS role, current_setting('app.organization_id') AS tenant`;
-          assert.equal(r.role,'routemate_app');
-          assert.equal(r.tenant,a);
-          return tx.organizationUnit.findMany();
-        });
-        assert.deepEqual(result,[]);
-        const [clean] = await runtime.$queryRaw`SELECT nullif(current_setting('app.organization_id',true),'') IS NULL AS clean`;
-        assert.equal(clean.clean,true);
-        const sentinel = new Error('intentional rollback');
-        await assert.rejects(withRuntimeContext(runtime,{organizationId:b},async () => { throw sentinel; }),e=>e===sentinel);
-        const [afterError] = await runtime.$queryRaw`SELECT nullif(current_setting('app.organization_id',true),'') IS NULL AS clean`;
-        assert.equal(afterError.clean,true);
+        await assert.rejects(withRuntimeContext(runtime,{organizationId:a},async () => true), /Unsafe runtime database identity/);
       } finally { await runtime.$disconnect(); }
     }
-    console.log('PASS: baseline hash; 12 native types/GiST; 45 forced RLS tables; tenant CRUD isolation; owner privacy; platform separation; partial uniqueness; context cleanup. All fixtures rolled back.');
+    console.log(`PASS: baseline hash; 12 native types/GiST; ${tables.length} forced RLS tables; tenant CRUD isolation; owner privacy; platform separation; partial uniqueness; context cleanup. All fixtures rolled back.`);
   } catch(e) {
     await c.query('ROLLBACK').catch(()=>{});
     console.error(`FAIL at ${stage}: ${e.code || e.name}. ${e instanceof assert.AssertionError ? e.message : 'Database error details suppressed to protect data.'}`);

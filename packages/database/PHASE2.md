@@ -1,5 +1,7 @@
 # RouteMate Phase 2 database
 
+> Phase 3 supersedes the role-provisioning and runtime-helper instructions below. Keep `routemate_app` and `routemate_platform_admin` **NOLOGIN**. Use separate login principals as described in [Phase 3](../../docs/architecture/phase3-backend.md) and `infrastructure/postgres/phase3-principals.sql`. The runtime helper now checks inherited privileges and rejects DBA impersonation; Phase 3 integration tests exercise real login principals. The remainder records Phase 2's original implementation.
+
 ## Execution result — 2026-09-10
 
 Applied successfully with Prisma migrate deploy to the canonical local database. Both `0_init` and `20260910150000_phase2_spatial_rls` are recorded as applied; migrate status reports up to date. Prisma 7.10.0 schema validation and client generation passed. Migration rollback rehearsal and post-deployment security tests passed, including the real Prisma runtime wrapper and commit/rollback cleanup on a one-connection pool. Verification left zero application rows; all fixtures were rolled back. The baseline migration hash is unchanged. No password or existing connection configuration was changed. Runtime credential provisioning and application wiring remain required before NestJS can use the restricted login.

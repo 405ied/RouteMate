@@ -900,6 +900,17 @@ exports.Prisma.SystemSettingScalarFieldEnum = {
   updatedById: 'updatedById'
 };
 
+exports.Prisma.StaffSessionScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  userId: 'userId',
+  refreshTokenHash: 'refreshTokenHash',
+  expiresAt: 'expiresAt',
+  revokedAt: 'revokedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1370,7 +1381,8 @@ exports.Prisma.ModelName = {
   Notification: 'Notification',
   AuditLog: 'AuditLog',
   SecurityEvent: 'SecurityEvent',
-  SystemSetting: 'SystemSetting'
+  SystemSetting: 'SystemSetting',
+  StaffSession: 'StaffSession'
 };
 
 /**

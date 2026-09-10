@@ -452,6 +452,7 @@ enum SettingValueType {
 }
 
 model Organization {
+  staffSessions      StaffSession[]
   id                 String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   organizationCode   String             @unique @map("organization_code") @db.VarChar(30)
   name               String             @db.VarChar(255)
@@ -666,26 +667,27 @@ model Park {
 
 /// A null organizationId is reserved for platform operators. Tenant staff belong to one organization. Phase 2 must enforce actor/grant tenant scope, including platform exceptions; these nullable global references use UUID foreign keys.
 model User {
-  id                  String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  organizationId      String?    @map("organization_id") @db.Uuid
-  firstName           String     @map("first_name") @db.VarChar(100)
-  lastName            String     @map("last_name") @db.VarChar(100)
-  email               String?    @db.VarChar(254)
-  phone               String?    @db.VarChar(32)
-  passwordHash        String?    @map("password_hash") @db.Text
-  externalAuthSubject String?    @unique @map("external_auth_subject") @db.VarChar(255)
-  status              UserStatus @default(INVITED)
-  lastLoginAt         DateTime?  @map("last_login_at") @db.Timestamptz(6)
-  failedLoginAttempts Int        @default(0) @map("failed_login_attempts")
-  lockedUntil         DateTime?  @map("locked_until") @db.Timestamptz(6)
-  mfaEnabled          Boolean    @default(false) @map("mfa_enabled")
-  emailVerifiedAt     DateTime?  @map("email_verified_at") @db.Timestamptz(6)
-  phoneVerifiedAt     DateTime?  @map("phone_verified_at") @db.Timestamptz(6)
-  createdAt           DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt           DateTime   @updatedAt @map("updated_at") @db.Timestamptz(6)
-  deletedAt           DateTime?  @map("deleted_at") @db.Timestamptz(6)
-  createdById         String?    @map("created_by_id") @db.Uuid
-  updatedById         String?    @map("updated_by_id") @db.Uuid
+  staffSessions       StaffSession[]
+  id                  String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId      String?        @map("organization_id") @db.Uuid
+  firstName           String         @map("first_name") @db.VarChar(100)
+  lastName            String         @map("last_name") @db.VarChar(100)
+  email               String?        @db.VarChar(254)
+  phone               String?        @db.VarChar(32)
+  passwordHash        String?        @map("password_hash") @db.Text
+  externalAuthSubject String?        @unique @map("external_auth_subject") @db.VarChar(255)
+  status              UserStatus     @default(INVITED)
+  lastLoginAt         DateTime?      @map("last_login_at") @db.Timestamptz(6)
+  failedLoginAttempts Int            @default(0) @map("failed_login_attempts")
+  lockedUntil         DateTime?      @map("locked_until") @db.Timestamptz(6)
+  mfaEnabled          Boolean        @default(false) @map("mfa_enabled")
+  emailVerifiedAt     DateTime?      @map("email_verified_at") @db.Timestamptz(6)
+  phoneVerifiedAt     DateTime?      @map("phone_verified_at") @db.Timestamptz(6)
+  createdAt           DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt           DateTime?      @map("deleted_at") @db.Timestamptz(6)
+  createdById         String?        @map("created_by_id") @db.Uuid
+  updatedById         String?        @map("updated_by_id") @db.Uuid
 
   organization                       Organization?              @relation("User_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
   createdBy                          User?                      @relation("User_createdBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
@@ -2039,4 +2041,22 @@ model SystemSetting {
 
   @@index([updatedById])
   @@map("system_settings")
+}
+
+/// Refresh tokens are stored only as SHA-256 hashes. RLS requires tenant AND user context.
+model StaffSession {
+  id               String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId   String       @map("organization_id") @db.Uuid
+  userId           String       @map("user_id") @db.Uuid
+  refreshTokenHash String       @map("refresh_token_hash") @db.VarChar(64)
+  expiresAt        DateTime     @map("expires_at") @db.Timestamptz(6)
+  revokedAt        DateTime?    @map("revoked_at") @db.Timestamptz(6)
+  createdAt        DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  user             User         @relation(fields: [organizationId, userId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict, map: "staff_sessions_user_fk")
+  organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "staff_sessions_organization_fk")
+
+  @@index([organizationId, userId])
+  @@index([expiresAt])
+  @@map("staff_sessions")
 }

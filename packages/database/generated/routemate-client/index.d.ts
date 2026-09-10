@@ -238,6 +238,11 @@ export type SecurityEvent = $Result.DefaultSelection<Prisma.$SecurityEventPayloa
  * Platform-only, non-secret configuration; store secret references in a vault instead of credentials here. Phase 2 validate JSON type against valueType.
  */
 export type SystemSetting = $Result.DefaultSelection<Prisma.$SystemSettingPayload>
+/**
+ * Model StaffSession
+ * Refresh tokens are stored only as SHA-256 hashes. RLS requires tenant AND user context.
+ */
+export type StaffSession = $Result.DefaultSelection<Prisma.$StaffSessionPayload>
 
 /**
  * Enums
@@ -1539,6 +1544,16 @@ export class PrismaClient<
     * ```
     */
   get systemSetting(): Prisma.SystemSettingDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.staffSession`: Exposes CRUD operations for the **StaffSession** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more StaffSessions
+    * const staffSessions = await prisma.staffSession.findMany()
+    * ```
+    */
+  get staffSession(): Prisma.StaffSessionDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -2030,7 +2045,8 @@ export namespace Prisma {
     Notification: 'Notification',
     AuditLog: 'AuditLog',
     SecurityEvent: 'SecurityEvent',
-    SystemSetting: 'SystemSetting'
+    SystemSetting: 'SystemSetting',
+    StaffSession: 'StaffSession'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -2046,7 +2062,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "organization" | "organizationSettings" | "administrativeArea" | "organizationUnit" | "park" | "user" | "role" | "permission" | "userRole" | "rolePermission" | "driver" | "driverContact" | "driverDocument" | "driverStatusHistory" | "driverDisciplinaryAction" | "conductor" | "vehicleOwner" | "vehicle" | "vehicleDocument" | "vehicleOwnershipHistory" | "driverVehicleAssignment" | "vehicleCrewAssignment" | "route" | "routeStop" | "parkRoute" | "vehicleRouteAssignment" | "vehicleQrCode" | "passengerSession" | "passenger" | "trustedContact" | "verificationScan" | "journey" | "journeyEvent" | "journeyShare" | "complaint" | "complaintUpdate" | "incident" | "incidentEvidence" | "incidentUpdate" | "lostPropertyCase" | "lostPropertyUpdate" | "notification" | "auditLog" | "securityEvent" | "systemSetting"
+      modelProps: "organization" | "organizationSettings" | "administrativeArea" | "organizationUnit" | "park" | "user" | "role" | "permission" | "userRole" | "rolePermission" | "driver" | "driverContact" | "driverDocument" | "driverStatusHistory" | "driverDisciplinaryAction" | "conductor" | "vehicleOwner" | "vehicle" | "vehicleDocument" | "vehicleOwnershipHistory" | "driverVehicleAssignment" | "vehicleCrewAssignment" | "route" | "routeStop" | "parkRoute" | "vehicleRouteAssignment" | "vehicleQrCode" | "passengerSession" | "passenger" | "trustedContact" | "verificationScan" | "journey" | "journeyEvent" | "journeyShare" | "complaint" | "complaintUpdate" | "incident" | "incidentEvidence" | "incidentUpdate" | "lostPropertyCase" | "lostPropertyUpdate" | "notification" | "auditLog" | "securityEvent" | "systemSetting" | "staffSession"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -5380,6 +5396,80 @@ export namespace Prisma {
           }
         }
       }
+      StaffSession: {
+        payload: Prisma.$StaffSessionPayload<ExtArgs>
+        fields: Prisma.StaffSessionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.StaffSessionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StaffSessionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.StaffSessionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StaffSessionPayload>
+          }
+          findFirst: {
+            args: Prisma.StaffSessionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StaffSessionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.StaffSessionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StaffSessionPayload>
+          }
+          findMany: {
+            args: Prisma.StaffSessionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StaffSessionPayload>[]
+          }
+          create: {
+            args: Prisma.StaffSessionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StaffSessionPayload>
+          }
+          createMany: {
+            args: Prisma.StaffSessionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.StaffSessionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StaffSessionPayload>[]
+          }
+          delete: {
+            args: Prisma.StaffSessionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StaffSessionPayload>
+          }
+          update: {
+            args: Prisma.StaffSessionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StaffSessionPayload>
+          }
+          deleteMany: {
+            args: Prisma.StaffSessionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.StaffSessionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.StaffSessionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StaffSessionPayload>[]
+          }
+          upsert: {
+            args: Prisma.StaffSessionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StaffSessionPayload>
+          }
+          aggregate: {
+            args: Prisma.StaffSessionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateStaffSession>
+          }
+          groupBy: {
+            args: Prisma.StaffSessionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<StaffSessionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.StaffSessionCountArgs<ExtArgs>
+            result: $Utils.Optional<StaffSessionCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -5548,6 +5638,7 @@ export namespace Prisma {
     auditLog?: AuditLogOmit
     securityEvent?: SecurityEventOmit
     systemSetting?: SystemSettingOmit
+    staffSession?: StaffSessionOmit
   }
 
   /* Types for Logging */
@@ -5628,6 +5719,7 @@ export namespace Prisma {
    */
 
   export type OrganizationCountOutputType = {
+    staffSessions: number
     user_organization: number
     role_organization: number
     userRole_organization: number
@@ -5667,6 +5759,7 @@ export namespace Prisma {
   }
 
   export type OrganizationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    staffSessions?: boolean | OrganizationCountOutputTypeCountStaffSessionsArgs
     user_organization?: boolean | OrganizationCountOutputTypeCountUser_organizationArgs
     role_organization?: boolean | OrganizationCountOutputTypeCountRole_organizationArgs
     userRole_organization?: boolean | OrganizationCountOutputTypeCountUserRole_organizationArgs
@@ -5714,6 +5807,13 @@ export namespace Prisma {
      * Select specific fields to fetch from the OrganizationCountOutputType
      */
     select?: OrganizationCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * OrganizationCountOutputType without action
+   */
+  export type OrganizationCountOutputTypeCountStaffSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: StaffSessionWhereInput
   }
 
   /**
@@ -6202,6 +6302,7 @@ export namespace Prisma {
    */
 
   export type UserCountOutputType = {
+    staffSessions: number
     park_managerUser: number
     userRole_user: number
     userRole_grantedBy: number
@@ -6262,6 +6363,7 @@ export namespace Prisma {
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    staffSessions?: boolean | UserCountOutputTypeCountStaffSessionsArgs
     park_managerUser?: boolean | UserCountOutputTypeCountPark_managerUserArgs
     userRole_user?: boolean | UserCountOutputTypeCountUserRole_userArgs
     userRole_grantedBy?: boolean | UserCountOutputTypeCountUserRole_grantedByArgs
@@ -6330,6 +6432,13 @@ export namespace Prisma {
      * Select specific fields to fetch from the UserCountOutputType
      */
     select?: UserCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountStaffSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: StaffSessionWhereInput
   }
 
   /**
@@ -8040,6 +8149,7 @@ export namespace Prisma {
     deletedAt?: boolean
     createdById?: boolean
     updatedById?: boolean
+    staffSessions?: boolean | Organization$staffSessionsArgs<ExtArgs>
     createdBy?: boolean | Organization$createdByArgs<ExtArgs>
     updatedBy?: boolean | Organization$updatedByArgs<ExtArgs>
     user_organization?: boolean | Organization$user_organizationArgs<ExtArgs>
@@ -8148,6 +8258,7 @@ export namespace Prisma {
 
   export type OrganizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "organizationCode" | "name" | "shortName" | "organizationType" | "registrationNumber" | "email" | "phone" | "address" | "countryCode" | "status" | "logoUrl" | "createdAt" | "updatedAt" | "deletedAt" | "createdById" | "updatedById", ExtArgs["result"]["organization"]>
   export type OrganizationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    staffSessions?: boolean | Organization$staffSessionsArgs<ExtArgs>
     createdBy?: boolean | Organization$createdByArgs<ExtArgs>
     updatedBy?: boolean | Organization$updatedByArgs<ExtArgs>
     user_organization?: boolean | Organization$user_organizationArgs<ExtArgs>
@@ -8201,6 +8312,7 @@ export namespace Prisma {
   export type $OrganizationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Organization"
     objects: {
+      staffSessions: Prisma.$StaffSessionPayload<ExtArgs>[]
       createdBy: Prisma.$UserPayload<ExtArgs> | null
       updatedBy: Prisma.$UserPayload<ExtArgs> | null
       user_organization: Prisma.$UserPayload<ExtArgs>[]
@@ -8653,6 +8765,7 @@ export namespace Prisma {
    */
   export interface Prisma__OrganizationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    staffSessions<T extends Organization$staffSessionsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$staffSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StaffSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     createdBy<T extends Organization$createdByArgs<ExtArgs> = {}>(args?: Subset<T, Organization$createdByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     updatedBy<T extends Organization$updatedByArgs<ExtArgs> = {}>(args?: Subset<T, Organization$updatedByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     user_organization<T extends Organization$user_organizationArgs<ExtArgs> = {}>(args?: Subset<T, Organization$user_organizationArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -9136,6 +9249,30 @@ export namespace Prisma {
      * Limit how many Organizations to delete.
      */
     limit?: number
+  }
+
+  /**
+   * Organization.staffSessions
+   */
+  export type Organization$staffSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StaffSession
+     */
+    select?: StaffSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StaffSession
+     */
+    omit?: StaffSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StaffSessionInclude<ExtArgs> | null
+    where?: StaffSessionWhereInput
+    orderBy?: StaffSessionOrderByWithRelationInput | StaffSessionOrderByWithRelationInput[]
+    cursor?: StaffSessionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: StaffSessionScalarFieldEnum | StaffSessionScalarFieldEnum[]
   }
 
   /**
@@ -16072,6 +16209,7 @@ export namespace Prisma {
     deletedAt?: boolean
     createdById?: boolean
     updatedById?: boolean
+    staffSessions?: boolean | User$staffSessionsArgs<ExtArgs>
     organization?: boolean | User$organizationArgs<ExtArgs>
     createdBy?: boolean | User$createdByArgs<ExtArgs>
     updatedBy?: boolean | User$updatedByArgs<ExtArgs>
@@ -16214,6 +16352,7 @@ export namespace Prisma {
 
   export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "organizationId" | "firstName" | "lastName" | "email" | "phone" | "passwordHash" | "externalAuthSubject" | "status" | "lastLoginAt" | "failedLoginAttempts" | "lockedUntil" | "mfaEnabled" | "emailVerifiedAt" | "phoneVerifiedAt" | "createdAt" | "updatedAt" | "deletedAt" | "createdById" | "updatedById", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    staffSessions?: boolean | User$staffSessionsArgs<ExtArgs>
     organization?: boolean | User$organizationArgs<ExtArgs>
     createdBy?: boolean | User$createdByArgs<ExtArgs>
     updatedBy?: boolean | User$updatedByArgs<ExtArgs>
@@ -16292,6 +16431,7 @@ export namespace Prisma {
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
+      staffSessions: Prisma.$StaffSessionPayload<ExtArgs>[]
       organization: Prisma.$OrganizationPayload<ExtArgs> | null
       createdBy: Prisma.$UserPayload<ExtArgs> | null
       updatedBy: Prisma.$UserPayload<ExtArgs> | null
@@ -16770,6 +16910,7 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    staffSessions<T extends User$staffSessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$staffSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StaffSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     organization<T extends User$organizationArgs<ExtArgs> = {}>(args?: Subset<T, User$organizationArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     createdBy<T extends User$createdByArgs<ExtArgs> = {}>(args?: Subset<T, User$createdByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     updatedBy<T extends User$updatedByArgs<ExtArgs> = {}>(args?: Subset<T, User$updatedByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
@@ -17279,6 +17420,30 @@ export namespace Prisma {
      * Limit how many Users to delete.
      */
     limit?: number
+  }
+
+  /**
+   * User.staffSessions
+   */
+  export type User$staffSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StaffSession
+     */
+    select?: StaffSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StaffSession
+     */
+    omit?: StaffSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StaffSessionInclude<ExtArgs> | null
+    where?: StaffSessionWhereInput
+    orderBy?: StaffSessionOrderByWithRelationInput | StaffSessionOrderByWithRelationInput[]
+    cursor?: StaffSessionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: StaffSessionScalarFieldEnum | StaffSessionScalarFieldEnum[]
   }
 
   /**
@@ -69665,7 +69830,7 @@ export namespace Prisma {
     readonly updatedAt: FieldRef<"SystemSetting", 'DateTime'>
     readonly updatedById: FieldRef<"SystemSetting", 'String'>
   }
-    
+
 
   // Custom InputTypes
   /**
@@ -69734,31 +69899,31 @@ export namespace Prisma {
     where?: SystemSettingWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
+     *
      * Determine the order of SystemSettings to fetch.
      */
     orderBy?: SystemSettingOrderByWithRelationInput | SystemSettingOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
+     *
      * Sets the position for searching for SystemSettings.
      */
     cursor?: SystemSettingWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
+     *
      * Take `±n` SystemSettings from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
+     *
      * Skip the first `n` SystemSettings.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
+     *
      * Filter by unique combinations of SystemSettings.
      */
     distinct?: SystemSettingScalarFieldEnum | SystemSettingScalarFieldEnum[]
@@ -69786,31 +69951,31 @@ export namespace Prisma {
     where?: SystemSettingWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
+     *
      * Determine the order of SystemSettings to fetch.
      */
     orderBy?: SystemSettingOrderByWithRelationInput | SystemSettingOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
+     *
      * Sets the position for searching for SystemSettings.
      */
     cursor?: SystemSettingWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
+     *
      * Take `±n` SystemSettings from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
+     *
      * Skip the first `n` SystemSettings.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
+     *
      * Filter by unique combinations of SystemSettings.
      */
     distinct?: SystemSettingScalarFieldEnum | SystemSettingScalarFieldEnum[]
@@ -69838,31 +70003,31 @@ export namespace Prisma {
     where?: SystemSettingWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
+     *
      * Determine the order of SystemSettings to fetch.
      */
     orderBy?: SystemSettingOrderByWithRelationInput | SystemSettingOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
+     *
      * Sets the position for listing SystemSettings.
      */
     cursor?: SystemSettingWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
+     *
      * Take `±n` SystemSettings from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
+     *
      * Skip the first `n` SystemSettings.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
+     *
      * Filter by unique combinations of SystemSettings.
      */
     distinct?: SystemSettingScalarFieldEnum | SystemSettingScalarFieldEnum[]
@@ -70099,6 +70264,1116 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: SystemSettingInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model StaffSession
+   */
+
+  export type AggregateStaffSession = {
+    _count: StaffSessionCountAggregateOutputType | null
+    _min: StaffSessionMinAggregateOutputType | null
+    _max: StaffSessionMaxAggregateOutputType | null
+  }
+
+  export type StaffSessionMinAggregateOutputType = {
+    id: string | null
+    organizationId: string | null
+    userId: string | null
+    refreshTokenHash: string | null
+    expiresAt: Date | null
+    revokedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type StaffSessionMaxAggregateOutputType = {
+    id: string | null
+    organizationId: string | null
+    userId: string | null
+    refreshTokenHash: string | null
+    expiresAt: Date | null
+    revokedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type StaffSessionCountAggregateOutputType = {
+    id: number
+    organizationId: number
+    userId: number
+    refreshTokenHash: number
+    expiresAt: number
+    revokedAt: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type StaffSessionMinAggregateInputType = {
+    id?: true
+    organizationId?: true
+    userId?: true
+    refreshTokenHash?: true
+    expiresAt?: true
+    revokedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type StaffSessionMaxAggregateInputType = {
+    id?: true
+    organizationId?: true
+    userId?: true
+    refreshTokenHash?: true
+    expiresAt?: true
+    revokedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type StaffSessionCountAggregateInputType = {
+    id?: true
+    organizationId?: true
+    userId?: true
+    refreshTokenHash?: true
+    expiresAt?: true
+    revokedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type StaffSessionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which StaffSession to aggregate.
+     */
+    where?: StaffSessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     *
+     * Determine the order of StaffSessions to fetch.
+     */
+    orderBy?: StaffSessionOrderByWithRelationInput | StaffSessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     *
+     * Sets the start position
+     */
+    cursor?: StaffSessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Take `±n` StaffSessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Skip the first `n` StaffSessions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     *
+     * Count returned StaffSessions
+    **/
+    _count?: true | StaffSessionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     *
+     * Select which fields to find the minimum value
+    **/
+    _min?: StaffSessionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     *
+     * Select which fields to find the maximum value
+    **/
+    _max?: StaffSessionMaxAggregateInputType
+  }
+
+  export type GetStaffSessionAggregateType<T extends StaffSessionAggregateArgs> = {
+        [P in keyof T & keyof AggregateStaffSession]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateStaffSession[P]>
+      : GetScalarType<T[P], AggregateStaffSession[P]>
+  }
+
+
+
+
+  export type StaffSessionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: StaffSessionWhereInput
+    orderBy?: StaffSessionOrderByWithAggregationInput | StaffSessionOrderByWithAggregationInput[]
+    by: StaffSessionScalarFieldEnum[] | StaffSessionScalarFieldEnum
+    having?: StaffSessionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: StaffSessionCountAggregateInputType | true
+    _min?: StaffSessionMinAggregateInputType
+    _max?: StaffSessionMaxAggregateInputType
+  }
+
+  export type StaffSessionGroupByOutputType = {
+    id: string
+    organizationId: string
+    userId: string
+    refreshTokenHash: string
+    expiresAt: Date
+    revokedAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: StaffSessionCountAggregateOutputType | null
+    _min: StaffSessionMinAggregateOutputType | null
+    _max: StaffSessionMaxAggregateOutputType | null
+  }
+
+  type GetStaffSessionGroupByPayload<T extends StaffSessionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<StaffSessionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof StaffSessionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], StaffSessionGroupByOutputType[P]>
+            : GetScalarType<T[P], StaffSessionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type StaffSessionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    userId?: boolean
+    refreshTokenHash?: boolean
+    expiresAt?: boolean
+    revokedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["staffSession"]>
+
+  export type StaffSessionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    userId?: boolean
+    refreshTokenHash?: boolean
+    expiresAt?: boolean
+    revokedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["staffSession"]>
+
+  export type StaffSessionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    userId?: boolean
+    refreshTokenHash?: boolean
+    expiresAt?: boolean
+    revokedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["staffSession"]>
+
+  export type StaffSessionSelectScalar = {
+    id?: boolean
+    organizationId?: boolean
+    userId?: boolean
+    refreshTokenHash?: boolean
+    expiresAt?: boolean
+    revokedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type StaffSessionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "organizationId" | "userId" | "refreshTokenHash" | "expiresAt" | "revokedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["staffSession"]>
+  export type StaffSessionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }
+  export type StaffSessionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }
+  export type StaffSessionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }
+
+  export type $StaffSessionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "StaffSession"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+      organization: Prisma.$OrganizationPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      organizationId: string
+      userId: string
+      refreshTokenHash: string
+      expiresAt: Date
+      revokedAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["staffSession"]>
+    composites: {}
+  }
+
+  type StaffSessionGetPayload<S extends boolean | null | undefined | StaffSessionDefaultArgs> = $Result.GetResult<Prisma.$StaffSessionPayload, S>
+
+  type StaffSessionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<StaffSessionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: StaffSessionCountAggregateInputType | true
+    }
+
+  export interface StaffSessionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['StaffSession'], meta: { name: 'StaffSession' } }
+    /**
+     * Find zero or one StaffSession that matches the filter.
+     * @param {StaffSessionFindUniqueArgs} args - Arguments to find a StaffSession
+     * @example
+     * // Get one StaffSession
+     * const staffSession = await prisma.staffSession.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends StaffSessionFindUniqueArgs>(args: SelectSubset<T, StaffSessionFindUniqueArgs<ExtArgs>>): Prisma__StaffSessionClient<$Result.GetResult<Prisma.$StaffSessionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one StaffSession that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {StaffSessionFindUniqueOrThrowArgs} args - Arguments to find a StaffSession
+     * @example
+     * // Get one StaffSession
+     * const staffSession = await prisma.staffSession.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends StaffSessionFindUniqueOrThrowArgs>(args: SelectSubset<T, StaffSessionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__StaffSessionClient<$Result.GetResult<Prisma.$StaffSessionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first StaffSession that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StaffSessionFindFirstArgs} args - Arguments to find a StaffSession
+     * @example
+     * // Get one StaffSession
+     * const staffSession = await prisma.staffSession.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends StaffSessionFindFirstArgs>(args?: SelectSubset<T, StaffSessionFindFirstArgs<ExtArgs>>): Prisma__StaffSessionClient<$Result.GetResult<Prisma.$StaffSessionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first StaffSession that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StaffSessionFindFirstOrThrowArgs} args - Arguments to find a StaffSession
+     * @example
+     * // Get one StaffSession
+     * const staffSession = await prisma.staffSession.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends StaffSessionFindFirstOrThrowArgs>(args?: SelectSubset<T, StaffSessionFindFirstOrThrowArgs<ExtArgs>>): Prisma__StaffSessionClient<$Result.GetResult<Prisma.$StaffSessionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more StaffSessions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StaffSessionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all StaffSessions
+     * const staffSessions = await prisma.staffSession.findMany()
+     *
+     * // Get first 10 StaffSessions
+     * const staffSessions = await prisma.staffSession.findMany({ take: 10 })
+     *
+     * // Only select the `id`
+     * const staffSessionWithIdOnly = await prisma.staffSession.findMany({ select: { id: true } })
+     *
+     */
+    findMany<T extends StaffSessionFindManyArgs>(args?: SelectSubset<T, StaffSessionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StaffSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a StaffSession.
+     * @param {StaffSessionCreateArgs} args - Arguments to create a StaffSession.
+     * @example
+     * // Create one StaffSession
+     * const StaffSession = await prisma.staffSession.create({
+     *   data: {
+     *     // ... data to create a StaffSession
+     *   }
+     * })
+     *
+     */
+    create<T extends StaffSessionCreateArgs>(args: SelectSubset<T, StaffSessionCreateArgs<ExtArgs>>): Prisma__StaffSessionClient<$Result.GetResult<Prisma.$StaffSessionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many StaffSessions.
+     * @param {StaffSessionCreateManyArgs} args - Arguments to create many StaffSessions.
+     * @example
+     * // Create many StaffSessions
+     * const staffSession = await prisma.staffSession.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *
+     */
+    createMany<T extends StaffSessionCreateManyArgs>(args?: SelectSubset<T, StaffSessionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many StaffSessions and returns the data saved in the database.
+     * @param {StaffSessionCreateManyAndReturnArgs} args - Arguments to create many StaffSessions.
+     * @example
+     * // Create many StaffSessions
+     * const staffSession = await prisma.staffSession.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *
+     * // Create many StaffSessions and only return the `id`
+     * const staffSessionWithIdOnly = await prisma.staffSession.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     *
+     */
+    createManyAndReturn<T extends StaffSessionCreateManyAndReturnArgs>(args?: SelectSubset<T, StaffSessionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StaffSessionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a StaffSession.
+     * @param {StaffSessionDeleteArgs} args - Arguments to delete one StaffSession.
+     * @example
+     * // Delete one StaffSession
+     * const StaffSession = await prisma.staffSession.delete({
+     *   where: {
+     *     // ... filter to delete one StaffSession
+     *   }
+     * })
+     *
+     */
+    delete<T extends StaffSessionDeleteArgs>(args: SelectSubset<T, StaffSessionDeleteArgs<ExtArgs>>): Prisma__StaffSessionClient<$Result.GetResult<Prisma.$StaffSessionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one StaffSession.
+     * @param {StaffSessionUpdateArgs} args - Arguments to update one StaffSession.
+     * @example
+     * // Update one StaffSession
+     * const staffSession = await prisma.staffSession.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     *
+     */
+    update<T extends StaffSessionUpdateArgs>(args: SelectSubset<T, StaffSessionUpdateArgs<ExtArgs>>): Prisma__StaffSessionClient<$Result.GetResult<Prisma.$StaffSessionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more StaffSessions.
+     * @param {StaffSessionDeleteManyArgs} args - Arguments to filter StaffSessions to delete.
+     * @example
+     * // Delete a few StaffSessions
+     * const { count } = await prisma.staffSession.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     *
+     */
+    deleteMany<T extends StaffSessionDeleteManyArgs>(args?: SelectSubset<T, StaffSessionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more StaffSessions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StaffSessionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many StaffSessions
+     * const staffSession = await prisma.staffSession.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     *
+     */
+    updateMany<T extends StaffSessionUpdateManyArgs>(args: SelectSubset<T, StaffSessionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more StaffSessions and returns the data updated in the database.
+     * @param {StaffSessionUpdateManyAndReturnArgs} args - Arguments to update many StaffSessions.
+     * @example
+     * // Update many StaffSessions
+     * const staffSession = await prisma.staffSession.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *
+     * // Update zero or more StaffSessions and only return the `id`
+     * const staffSessionWithIdOnly = await prisma.staffSession.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     *
+     */
+    updateManyAndReturn<T extends StaffSessionUpdateManyAndReturnArgs>(args: SelectSubset<T, StaffSessionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StaffSessionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one StaffSession.
+     * @param {StaffSessionUpsertArgs} args - Arguments to update or create a StaffSession.
+     * @example
+     * // Update or create a StaffSession
+     * const staffSession = await prisma.staffSession.upsert({
+     *   create: {
+     *     // ... data to create a StaffSession
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the StaffSession we want to update
+     *   }
+     * })
+     */
+    upsert<T extends StaffSessionUpsertArgs>(args: SelectSubset<T, StaffSessionUpsertArgs<ExtArgs>>): Prisma__StaffSessionClient<$Result.GetResult<Prisma.$StaffSessionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of StaffSessions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StaffSessionCountArgs} args - Arguments to filter StaffSessions to count.
+     * @example
+     * // Count the number of StaffSessions
+     * const count = await prisma.staffSession.count({
+     *   where: {
+     *     // ... the filter for the StaffSessions we want to count
+     *   }
+     * })
+    **/
+    count<T extends StaffSessionCountArgs>(
+      args?: Subset<T, StaffSessionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], StaffSessionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a StaffSession.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StaffSessionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends StaffSessionAggregateArgs>(args: Subset<T, StaffSessionAggregateArgs>): Prisma.PrismaPromise<GetStaffSessionAggregateType<T>>
+
+    /**
+     * Group by StaffSession.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StaffSessionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     *
+    **/
+    groupBy<
+      T extends StaffSessionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: StaffSessionGroupByArgs['orderBy'] }
+        : { orderBy?: StaffSessionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, StaffSessionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetStaffSessionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the StaffSession model
+   */
+  readonly fields: StaffSessionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for StaffSession.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__StaffSessionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    organization<T extends OrganizationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationDefaultArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the StaffSession model
+   */
+  interface StaffSessionFieldRefs {
+    readonly id: FieldRef<"StaffSession", 'String'>
+    readonly organizationId: FieldRef<"StaffSession", 'String'>
+    readonly userId: FieldRef<"StaffSession", 'String'>
+    readonly refreshTokenHash: FieldRef<"StaffSession", 'String'>
+    readonly expiresAt: FieldRef<"StaffSession", 'DateTime'>
+    readonly revokedAt: FieldRef<"StaffSession", 'DateTime'>
+    readonly createdAt: FieldRef<"StaffSession", 'DateTime'>
+    readonly updatedAt: FieldRef<"StaffSession", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * StaffSession findUnique
+   */
+  export type StaffSessionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StaffSession
+     */
+    select?: StaffSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StaffSession
+     */
+    omit?: StaffSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StaffSessionInclude<ExtArgs> | null
+    /**
+     * Filter, which StaffSession to fetch.
+     */
+    where: StaffSessionWhereUniqueInput
+  }
+
+  /**
+   * StaffSession findUniqueOrThrow
+   */
+  export type StaffSessionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StaffSession
+     */
+    select?: StaffSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StaffSession
+     */
+    omit?: StaffSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StaffSessionInclude<ExtArgs> | null
+    /**
+     * Filter, which StaffSession to fetch.
+     */
+    where: StaffSessionWhereUniqueInput
+  }
+
+  /**
+   * StaffSession findFirst
+   */
+  export type StaffSessionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StaffSession
+     */
+    select?: StaffSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StaffSession
+     */
+    omit?: StaffSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StaffSessionInclude<ExtArgs> | null
+    /**
+     * Filter, which StaffSession to fetch.
+     */
+    where?: StaffSessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StaffSessions to fetch.
+     */
+    orderBy?: StaffSessionOrderByWithRelationInput | StaffSessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for StaffSessions.
+     */
+    cursor?: StaffSessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StaffSessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StaffSessions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of StaffSessions.
+     */
+    distinct?: StaffSessionScalarFieldEnum | StaffSessionScalarFieldEnum[]
+  }
+
+  /**
+   * StaffSession findFirstOrThrow
+   */
+  export type StaffSessionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StaffSession
+     */
+    select?: StaffSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StaffSession
+     */
+    omit?: StaffSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StaffSessionInclude<ExtArgs> | null
+    /**
+     * Filter, which StaffSession to fetch.
+     */
+    where?: StaffSessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StaffSessions to fetch.
+     */
+    orderBy?: StaffSessionOrderByWithRelationInput | StaffSessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for StaffSessions.
+     */
+    cursor?: StaffSessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StaffSessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StaffSessions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of StaffSessions.
+     */
+    distinct?: StaffSessionScalarFieldEnum | StaffSessionScalarFieldEnum[]
+  }
+
+  /**
+   * StaffSession findMany
+   */
+  export type StaffSessionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StaffSession
+     */
+    select?: StaffSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StaffSession
+     */
+    omit?: StaffSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StaffSessionInclude<ExtArgs> | null
+    /**
+     * Filter, which StaffSessions to fetch.
+     */
+    where?: StaffSessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StaffSessions to fetch.
+     */
+    orderBy?: StaffSessionOrderByWithRelationInput | StaffSessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing StaffSessions.
+     */
+    cursor?: StaffSessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StaffSessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StaffSessions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of StaffSessions.
+     */
+    distinct?: StaffSessionScalarFieldEnum | StaffSessionScalarFieldEnum[]
+  }
+
+  /**
+   * StaffSession create
+   */
+  export type StaffSessionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StaffSession
+     */
+    select?: StaffSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StaffSession
+     */
+    omit?: StaffSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StaffSessionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a StaffSession.
+     */
+    data: XOR<StaffSessionCreateInput, StaffSessionUncheckedCreateInput>
+  }
+
+  /**
+   * StaffSession createMany
+   */
+  export type StaffSessionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many StaffSessions.
+     */
+    data: StaffSessionCreateManyInput | StaffSessionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * StaffSession createManyAndReturn
+   */
+  export type StaffSessionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StaffSession
+     */
+    select?: StaffSessionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the StaffSession
+     */
+    omit?: StaffSessionOmit<ExtArgs> | null
+    /**
+     * The data used to create many StaffSessions.
+     */
+    data: StaffSessionCreateManyInput | StaffSessionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StaffSessionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * StaffSession update
+   */
+  export type StaffSessionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StaffSession
+     */
+    select?: StaffSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StaffSession
+     */
+    omit?: StaffSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StaffSessionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a StaffSession.
+     */
+    data: XOR<StaffSessionUpdateInput, StaffSessionUncheckedUpdateInput>
+    /**
+     * Choose, which StaffSession to update.
+     */
+    where: StaffSessionWhereUniqueInput
+  }
+
+  /**
+   * StaffSession updateMany
+   */
+  export type StaffSessionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update StaffSessions.
+     */
+    data: XOR<StaffSessionUpdateManyMutationInput, StaffSessionUncheckedUpdateManyInput>
+    /**
+     * Filter which StaffSessions to update
+     */
+    where?: StaffSessionWhereInput
+    /**
+     * Limit how many StaffSessions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * StaffSession updateManyAndReturn
+   */
+  export type StaffSessionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StaffSession
+     */
+    select?: StaffSessionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the StaffSession
+     */
+    omit?: StaffSessionOmit<ExtArgs> | null
+    /**
+     * The data used to update StaffSessions.
+     */
+    data: XOR<StaffSessionUpdateManyMutationInput, StaffSessionUncheckedUpdateManyInput>
+    /**
+     * Filter which StaffSessions to update
+     */
+    where?: StaffSessionWhereInput
+    /**
+     * Limit how many StaffSessions to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StaffSessionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * StaffSession upsert
+   */
+  export type StaffSessionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StaffSession
+     */
+    select?: StaffSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StaffSession
+     */
+    omit?: StaffSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StaffSessionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the StaffSession to update in case it exists.
+     */
+    where: StaffSessionWhereUniqueInput
+    /**
+     * In case the StaffSession found by the `where` argument doesn't exist, create a new StaffSession with this data.
+     */
+    create: XOR<StaffSessionCreateInput, StaffSessionUncheckedCreateInput>
+    /**
+     * In case the StaffSession was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<StaffSessionUpdateInput, StaffSessionUncheckedUpdateInput>
+  }
+
+  /**
+   * StaffSession delete
+   */
+  export type StaffSessionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StaffSession
+     */
+    select?: StaffSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StaffSession
+     */
+    omit?: StaffSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StaffSessionInclude<ExtArgs> | null
+    /**
+     * Filter which StaffSession to delete.
+     */
+    where: StaffSessionWhereUniqueInput
+  }
+
+  /**
+   * StaffSession deleteMany
+   */
+  export type StaffSessionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which StaffSessions to delete
+     */
+    where?: StaffSessionWhereInput
+    /**
+     * Limit how many StaffSessions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * StaffSession without action
+   */
+  export type StaffSessionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StaffSession
+     */
+    select?: StaffSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StaffSession
+     */
+    omit?: StaffSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StaffSessionInclude<ExtArgs> | null
   }
 
 
@@ -71031,6 +72306,20 @@ export namespace Prisma {
   export type SystemSettingScalarFieldEnum = (typeof SystemSettingScalarFieldEnum)[keyof typeof SystemSettingScalarFieldEnum]
 
 
+  export const StaffSessionScalarFieldEnum: {
+    id: 'id',
+    organizationId: 'organizationId',
+    userId: 'userId',
+    refreshTokenHash: 'refreshTokenHash',
+    expiresAt: 'expiresAt',
+    revokedAt: 'revokedAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type StaffSessionScalarFieldEnum = (typeof StaffSessionScalarFieldEnum)[keyof typeof StaffSessionScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -71871,6 +73160,7 @@ export namespace Prisma {
     deletedAt?: DateTimeNullableFilter<"Organization"> | Date | string | null
     createdById?: UuidNullableFilter<"Organization"> | string | null
     updatedById?: UuidNullableFilter<"Organization"> | string | null
+    staffSessions?: StaffSessionListRelationFilter
     createdBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     updatedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     user_organization?: UserListRelationFilter
@@ -71930,6 +73220,7 @@ export namespace Prisma {
     deletedAt?: SortOrderInput | SortOrder
     createdById?: SortOrderInput | SortOrder
     updatedById?: SortOrderInput | SortOrder
+    staffSessions?: StaffSessionOrderByRelationAggregateInput
     createdBy?: UserOrderByWithRelationInput
     updatedBy?: UserOrderByWithRelationInput
     user_organization?: UserOrderByRelationAggregateInput
@@ -71992,6 +73283,7 @@ export namespace Prisma {
     deletedAt?: DateTimeNullableFilter<"Organization"> | Date | string | null
     createdById?: UuidNullableFilter<"Organization"> | string | null
     updatedById?: UuidNullableFilter<"Organization"> | string | null
+    staffSessions?: StaffSessionListRelationFilter
     createdBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     updatedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     user_organization?: UserListRelationFilter
@@ -72627,6 +73919,7 @@ export namespace Prisma {
     deletedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     createdById?: UuidNullableFilter<"User"> | string | null
     updatedById?: UuidNullableFilter<"User"> | string | null
+    staffSessions?: StaffSessionListRelationFilter
     organization?: XOR<OrganizationNullableScalarRelationFilter, OrganizationWhereInput> | null
     createdBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     updatedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
@@ -72712,6 +74005,7 @@ export namespace Prisma {
     deletedAt?: SortOrderInput | SortOrder
     createdById?: SortOrderInput | SortOrder
     updatedById?: SortOrderInput | SortOrder
+    staffSessions?: StaffSessionOrderByRelationAggregateInput
     organization?: OrganizationOrderByWithRelationInput
     createdBy?: UserOrderByWithRelationInput
     updatedBy?: UserOrderByWithRelationInput
@@ -72803,6 +74097,7 @@ export namespace Prisma {
     deletedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     createdById?: UuidNullableFilter<"User"> | string | null
     updatedById?: UuidNullableFilter<"User"> | string | null
+    staffSessions?: StaffSessionListRelationFilter
     organization?: XOR<OrganizationNullableScalarRelationFilter, OrganizationWhereInput> | null
     createdBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     updatedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
@@ -77473,6 +78768,79 @@ export namespace Prisma {
     updatedById?: UuidNullableWithAggregatesFilter<"SystemSetting"> | string | null
   }
 
+  export type StaffSessionWhereInput = {
+    AND?: StaffSessionWhereInput | StaffSessionWhereInput[]
+    OR?: StaffSessionWhereInput[]
+    NOT?: StaffSessionWhereInput | StaffSessionWhereInput[]
+    id?: UuidFilter<"StaffSession"> | string
+    organizationId?: UuidFilter<"StaffSession"> | string
+    userId?: UuidFilter<"StaffSession"> | string
+    refreshTokenHash?: StringFilter<"StaffSession"> | string
+    expiresAt?: DateTimeFilter<"StaffSession"> | Date | string
+    revokedAt?: DateTimeNullableFilter<"StaffSession"> | Date | string | null
+    createdAt?: DateTimeFilter<"StaffSession"> | Date | string
+    updatedAt?: DateTimeFilter<"StaffSession"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+  }
+
+  export type StaffSessionOrderByWithRelationInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    userId?: SortOrder
+    refreshTokenHash?: SortOrder
+    expiresAt?: SortOrder
+    revokedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+    organization?: OrganizationOrderByWithRelationInput
+  }
+
+  export type StaffSessionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: StaffSessionWhereInput | StaffSessionWhereInput[]
+    OR?: StaffSessionWhereInput[]
+    NOT?: StaffSessionWhereInput | StaffSessionWhereInput[]
+    organizationId?: UuidFilter<"StaffSession"> | string
+    userId?: UuidFilter<"StaffSession"> | string
+    refreshTokenHash?: StringFilter<"StaffSession"> | string
+    expiresAt?: DateTimeFilter<"StaffSession"> | Date | string
+    revokedAt?: DateTimeNullableFilter<"StaffSession"> | Date | string | null
+    createdAt?: DateTimeFilter<"StaffSession"> | Date | string
+    updatedAt?: DateTimeFilter<"StaffSession"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+  }, "id">
+
+  export type StaffSessionOrderByWithAggregationInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    userId?: SortOrder
+    refreshTokenHash?: SortOrder
+    expiresAt?: SortOrder
+    revokedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: StaffSessionCountOrderByAggregateInput
+    _max?: StaffSessionMaxOrderByAggregateInput
+    _min?: StaffSessionMinOrderByAggregateInput
+  }
+
+  export type StaffSessionScalarWhereWithAggregatesInput = {
+    AND?: StaffSessionScalarWhereWithAggregatesInput | StaffSessionScalarWhereWithAggregatesInput[]
+    OR?: StaffSessionScalarWhereWithAggregatesInput[]
+    NOT?: StaffSessionScalarWhereWithAggregatesInput | StaffSessionScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"StaffSession"> | string
+    organizationId?: UuidWithAggregatesFilter<"StaffSession"> | string
+    userId?: UuidWithAggregatesFilter<"StaffSession"> | string
+    refreshTokenHash?: StringWithAggregatesFilter<"StaffSession"> | string
+    expiresAt?: DateTimeWithAggregatesFilter<"StaffSession"> | Date | string
+    revokedAt?: DateTimeNullableWithAggregatesFilter<"StaffSession"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"StaffSession"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"StaffSession"> | Date | string
+  }
+
   export type OrganizationCreateInput = {
     id?: string
     organizationCode: string
@@ -77489,6 +78857,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -77548,6 +78917,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -77603,6 +78973,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -77662,6 +79033,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -78343,6 +79715,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -78428,6 +79801,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -78507,6 +79881,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -78592,6 +79967,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -83491,6 +84867,81 @@ export namespace Prisma {
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type StaffSessionCreateInput = {
+    id?: string
+    refreshTokenHash: string
+    expiresAt: Date | string
+    revokedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutStaffSessionsInput
+    organization: OrganizationCreateNestedOneWithoutStaffSessionsInput
+  }
+
+  export type StaffSessionUncheckedCreateInput = {
+    id?: string
+    organizationId: string
+    userId: string
+    refreshTokenHash: string
+    expiresAt: Date | string
+    revokedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type StaffSessionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    refreshTokenHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutStaffSessionsNestedInput
+    organization?: OrganizationUpdateOneRequiredWithoutStaffSessionsNestedInput
+  }
+
+  export type StaffSessionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    refreshTokenHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StaffSessionCreateManyInput = {
+    id?: string
+    organizationId: string
+    userId: string
+    refreshTokenHash: string
+    expiresAt: Date | string
+    revokedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type StaffSessionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    refreshTokenHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StaffSessionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    refreshTokenHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type UuidFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -83579,6 +85030,12 @@ export namespace Prisma {
     gte?: string | StringFieldRefInput<$PrismaModel>
     mode?: QueryMode
     not?: NestedUuidNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type StaffSessionListRelationFilter = {
+    every?: StaffSessionWhereInput
+    some?: StaffSessionWhereInput
+    none?: StaffSessionWhereInput
   }
 
   export type UserNullableScalarRelationFilter = {
@@ -83810,6 +85267,10 @@ export namespace Prisma {
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
+  }
+
+  export type StaffSessionOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type UserOrderByRelationAggregateInput = {
@@ -88040,6 +89501,46 @@ export namespace Prisma {
     _max?: NestedEnumSettingValueTypeFilter<$PrismaModel>
   }
 
+  export type StaffSessionCountOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    userId?: SortOrder
+    refreshTokenHash?: SortOrder
+    expiresAt?: SortOrder
+    revokedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type StaffSessionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    userId?: SortOrder
+    refreshTokenHash?: SortOrder
+    expiresAt?: SortOrder
+    revokedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type StaffSessionMinOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    userId?: SortOrder
+    refreshTokenHash?: SortOrder
+    expiresAt?: SortOrder
+    revokedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type StaffSessionCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<StaffSessionCreateWithoutOrganizationInput, StaffSessionUncheckedCreateWithoutOrganizationInput> | StaffSessionCreateWithoutOrganizationInput[] | StaffSessionUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: StaffSessionCreateOrConnectWithoutOrganizationInput | StaffSessionCreateOrConnectWithoutOrganizationInput[]
+    createMany?: StaffSessionCreateManyOrganizationInputEnvelope
+    connect?: StaffSessionWhereUniqueInput | StaffSessionWhereUniqueInput[]
+  }
+
   export type UserCreateNestedOneWithoutOrganization_createdByInput = {
     create?: XOR<UserCreateWithoutOrganization_createdByInput, UserUncheckedCreateWithoutOrganization_createdByInput>
     connectOrCreate?: UserCreateOrConnectWithoutOrganization_createdByInput
@@ -88308,6 +89809,13 @@ export namespace Prisma {
     connectOrCreate?: LostPropertyUpdateCreateOrConnectWithoutOrganizationInput | LostPropertyUpdateCreateOrConnectWithoutOrganizationInput[]
     createMany?: LostPropertyUpdateCreateManyOrganizationInputEnvelope
     connect?: LostPropertyUpdateWhereUniqueInput | LostPropertyUpdateWhereUniqueInput[]
+  }
+
+  export type StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<StaffSessionCreateWithoutOrganizationInput, StaffSessionUncheckedCreateWithoutOrganizationInput> | StaffSessionCreateWithoutOrganizationInput[] | StaffSessionUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: StaffSessionCreateOrConnectWithoutOrganizationInput | StaffSessionCreateOrConnectWithoutOrganizationInput[]
+    createMany?: StaffSessionCreateManyOrganizationInputEnvelope
+    connect?: StaffSessionWhereUniqueInput | StaffSessionWhereUniqueInput[]
   }
 
   export type UserUncheckedCreateNestedManyWithoutOrganizationInput = {
@@ -88590,6 +90098,20 @@ export namespace Prisma {
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
     set?: Date | string | null
+  }
+
+  export type StaffSessionUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<StaffSessionCreateWithoutOrganizationInput, StaffSessionUncheckedCreateWithoutOrganizationInput> | StaffSessionCreateWithoutOrganizationInput[] | StaffSessionUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: StaffSessionCreateOrConnectWithoutOrganizationInput | StaffSessionCreateOrConnectWithoutOrganizationInput[]
+    upsert?: StaffSessionUpsertWithWhereUniqueWithoutOrganizationInput | StaffSessionUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: StaffSessionCreateManyOrganizationInputEnvelope
+    set?: StaffSessionWhereUniqueInput | StaffSessionWhereUniqueInput[]
+    disconnect?: StaffSessionWhereUniqueInput | StaffSessionWhereUniqueInput[]
+    delete?: StaffSessionWhereUniqueInput | StaffSessionWhereUniqueInput[]
+    connect?: StaffSessionWhereUniqueInput | StaffSessionWhereUniqueInput[]
+    update?: StaffSessionUpdateWithWhereUniqueWithoutOrganizationInput | StaffSessionUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: StaffSessionUpdateManyWithWhereWithoutOrganizationInput | StaffSessionUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: StaffSessionScalarWhereInput | StaffSessionScalarWhereInput[]
   }
 
   export type UserUpdateOneWithoutOrganization_createdByNestedInput = {
@@ -89124,6 +90646,20 @@ export namespace Prisma {
     update?: LostPropertyUpdateUpdateWithWhereUniqueWithoutOrganizationInput | LostPropertyUpdateUpdateWithWhereUniqueWithoutOrganizationInput[]
     updateMany?: LostPropertyUpdateUpdateManyWithWhereWithoutOrganizationInput | LostPropertyUpdateUpdateManyWithWhereWithoutOrganizationInput[]
     deleteMany?: LostPropertyUpdateScalarWhereInput | LostPropertyUpdateScalarWhereInput[]
+  }
+
+  export type StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<StaffSessionCreateWithoutOrganizationInput, StaffSessionUncheckedCreateWithoutOrganizationInput> | StaffSessionCreateWithoutOrganizationInput[] | StaffSessionUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: StaffSessionCreateOrConnectWithoutOrganizationInput | StaffSessionCreateOrConnectWithoutOrganizationInput[]
+    upsert?: StaffSessionUpsertWithWhereUniqueWithoutOrganizationInput | StaffSessionUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: StaffSessionCreateManyOrganizationInputEnvelope
+    set?: StaffSessionWhereUniqueInput | StaffSessionWhereUniqueInput[]
+    disconnect?: StaffSessionWhereUniqueInput | StaffSessionWhereUniqueInput[]
+    delete?: StaffSessionWhereUniqueInput | StaffSessionWhereUniqueInput[]
+    connect?: StaffSessionWhereUniqueInput | StaffSessionWhereUniqueInput[]
+    update?: StaffSessionUpdateWithWhereUniqueWithoutOrganizationInput | StaffSessionUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: StaffSessionUpdateManyWithWhereWithoutOrganizationInput | StaffSessionUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: StaffSessionScalarWhereInput | StaffSessionScalarWhereInput[]
   }
 
   export type UserUncheckedUpdateManyWithoutOrganizationNestedInput = {
@@ -90688,6 +92224,13 @@ export namespace Prisma {
     deleteMany?: LostPropertyCaseScalarWhereInput | LostPropertyCaseScalarWhereInput[]
   }
 
+  export type StaffSessionCreateNestedManyWithoutUserInput = {
+    create?: XOR<StaffSessionCreateWithoutUserInput, StaffSessionUncheckedCreateWithoutUserInput> | StaffSessionCreateWithoutUserInput[] | StaffSessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: StaffSessionCreateOrConnectWithoutUserInput | StaffSessionCreateOrConnectWithoutUserInput[]
+    createMany?: StaffSessionCreateManyUserInputEnvelope
+    connect?: StaffSessionWhereUniqueInput | StaffSessionWhereUniqueInput[]
+  }
+
   export type OrganizationCreateNestedOneWithoutUser_organizationInput = {
     create?: XOR<OrganizationCreateWithoutUser_organizationInput, OrganizationUncheckedCreateWithoutUser_organizationInput>
     connectOrCreate?: OrganizationCreateOrConnectWithoutUser_organizationInput
@@ -91117,6 +92660,13 @@ export namespace Prisma {
     connect?: ParkRouteWhereUniqueInput | ParkRouteWhereUniqueInput[]
   }
 
+  export type StaffSessionUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<StaffSessionCreateWithoutUserInput, StaffSessionUncheckedCreateWithoutUserInput> | StaffSessionCreateWithoutUserInput[] | StaffSessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: StaffSessionCreateOrConnectWithoutUserInput | StaffSessionCreateOrConnectWithoutUserInput[]
+    createMany?: StaffSessionCreateManyUserInputEnvelope
+    connect?: StaffSessionWhereUniqueInput | StaffSessionWhereUniqueInput[]
+  }
+
   export type ParkUncheckedCreateNestedManyWithoutManagerUserInput = {
     create?: XOR<ParkCreateWithoutManagerUserInput, ParkUncheckedCreateWithoutManagerUserInput> | ParkCreateWithoutManagerUserInput[] | ParkUncheckedCreateWithoutManagerUserInput[]
     connectOrCreate?: ParkCreateOrConnectWithoutManagerUserInput | ParkCreateOrConnectWithoutManagerUserInput[]
@@ -91538,6 +93088,20 @@ export namespace Prisma {
     decrement?: number
     multiply?: number
     divide?: number
+  }
+
+  export type StaffSessionUpdateManyWithoutUserNestedInput = {
+    create?: XOR<StaffSessionCreateWithoutUserInput, StaffSessionUncheckedCreateWithoutUserInput> | StaffSessionCreateWithoutUserInput[] | StaffSessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: StaffSessionCreateOrConnectWithoutUserInput | StaffSessionCreateOrConnectWithoutUserInput[]
+    upsert?: StaffSessionUpsertWithWhereUniqueWithoutUserInput | StaffSessionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: StaffSessionCreateManyUserInputEnvelope
+    set?: StaffSessionWhereUniqueInput | StaffSessionWhereUniqueInput[]
+    disconnect?: StaffSessionWhereUniqueInput | StaffSessionWhereUniqueInput[]
+    delete?: StaffSessionWhereUniqueInput | StaffSessionWhereUniqueInput[]
+    connect?: StaffSessionWhereUniqueInput | StaffSessionWhereUniqueInput[]
+    update?: StaffSessionUpdateWithWhereUniqueWithoutUserInput | StaffSessionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: StaffSessionUpdateManyWithWhereWithoutUserInput | StaffSessionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: StaffSessionScalarWhereInput | StaffSessionScalarWhereInput[]
   }
 
   export type OrganizationUpdateOneWithoutUser_organizationNestedInput = {
@@ -92386,6 +93950,20 @@ export namespace Prisma {
     update?: ParkRouteUpdateWithWhereUniqueWithoutUpdatedByInput | ParkRouteUpdateWithWhereUniqueWithoutUpdatedByInput[]
     updateMany?: ParkRouteUpdateManyWithWhereWithoutUpdatedByInput | ParkRouteUpdateManyWithWhereWithoutUpdatedByInput[]
     deleteMany?: ParkRouteScalarWhereInput | ParkRouteScalarWhereInput[]
+  }
+
+  export type StaffSessionUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<StaffSessionCreateWithoutUserInput, StaffSessionUncheckedCreateWithoutUserInput> | StaffSessionCreateWithoutUserInput[] | StaffSessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: StaffSessionCreateOrConnectWithoutUserInput | StaffSessionCreateOrConnectWithoutUserInput[]
+    upsert?: StaffSessionUpsertWithWhereUniqueWithoutUserInput | StaffSessionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: StaffSessionCreateManyUserInputEnvelope
+    set?: StaffSessionWhereUniqueInput | StaffSessionWhereUniqueInput[]
+    disconnect?: StaffSessionWhereUniqueInput | StaffSessionWhereUniqueInput[]
+    delete?: StaffSessionWhereUniqueInput | StaffSessionWhereUniqueInput[]
+    connect?: StaffSessionWhereUniqueInput | StaffSessionWhereUniqueInput[]
+    update?: StaffSessionUpdateWithWhereUniqueWithoutUserInput | StaffSessionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: StaffSessionUpdateManyWithWhereWithoutUserInput | StaffSessionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: StaffSessionScalarWhereInput | StaffSessionScalarWhereInput[]
   }
 
   export type ParkUncheckedUpdateManyWithoutManagerUserNestedInput = {
@@ -98928,6 +100506,34 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSystemSetting_updatedByInput, UserUpdateWithoutSystemSetting_updatedByInput>, UserUncheckedUpdateWithoutSystemSetting_updatedByInput>
   }
 
+  export type UserCreateNestedOneWithoutStaffSessionsInput = {
+    create?: XOR<UserCreateWithoutStaffSessionsInput, UserUncheckedCreateWithoutStaffSessionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutStaffSessionsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type OrganizationCreateNestedOneWithoutStaffSessionsInput = {
+    create?: XOR<OrganizationCreateWithoutStaffSessionsInput, OrganizationUncheckedCreateWithoutStaffSessionsInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutStaffSessionsInput
+    connect?: OrganizationWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutStaffSessionsNestedInput = {
+    create?: XOR<UserCreateWithoutStaffSessionsInput, UserUncheckedCreateWithoutStaffSessionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutStaffSessionsInput
+    upsert?: UserUpsertWithoutStaffSessionsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutStaffSessionsInput, UserUpdateWithoutStaffSessionsInput>, UserUncheckedUpdateWithoutStaffSessionsInput>
+  }
+
+  export type OrganizationUpdateOneRequiredWithoutStaffSessionsNestedInput = {
+    create?: XOR<OrganizationCreateWithoutStaffSessionsInput, OrganizationUncheckedCreateWithoutStaffSessionsInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutStaffSessionsInput
+    upsert?: OrganizationUpsertWithoutStaffSessionsInput
+    connect?: OrganizationWhereUniqueInput
+    update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutStaffSessionsInput, OrganizationUpdateWithoutStaffSessionsInput>, OrganizationUncheckedUpdateWithoutStaffSessionsInput>
+  }
+
   export type NestedUuidFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -100180,6 +101786,36 @@ export namespace Prisma {
     _max?: NestedEnumSettingValueTypeFilter<$PrismaModel>
   }
 
+  export type StaffSessionCreateWithoutOrganizationInput = {
+    id?: string
+    refreshTokenHash: string
+    expiresAt: Date | string
+    revokedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutStaffSessionsInput
+  }
+
+  export type StaffSessionUncheckedCreateWithoutOrganizationInput = {
+    id?: string
+    userId: string
+    refreshTokenHash: string
+    expiresAt: Date | string
+    revokedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type StaffSessionCreateOrConnectWithoutOrganizationInput = {
+    where: StaffSessionWhereUniqueInput
+    create: XOR<StaffSessionCreateWithoutOrganizationInput, StaffSessionUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type StaffSessionCreateManyOrganizationInputEnvelope = {
+    data: StaffSessionCreateManyOrganizationInput | StaffSessionCreateManyOrganizationInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserCreateWithoutOrganization_createdByInput = {
     id?: string
     firstName: string
@@ -100198,6 +101834,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -100282,6 +101919,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -100365,6 +102003,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -100449,6 +102088,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -100532,6 +102172,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
     park_managerUser?: ParkCreateNestedManyWithoutManagerUserInput
@@ -100615,6 +102256,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -102407,6 +104049,36 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type StaffSessionUpsertWithWhereUniqueWithoutOrganizationInput = {
+    where: StaffSessionWhereUniqueInput
+    update: XOR<StaffSessionUpdateWithoutOrganizationInput, StaffSessionUncheckedUpdateWithoutOrganizationInput>
+    create: XOR<StaffSessionCreateWithoutOrganizationInput, StaffSessionUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type StaffSessionUpdateWithWhereUniqueWithoutOrganizationInput = {
+    where: StaffSessionWhereUniqueInput
+    data: XOR<StaffSessionUpdateWithoutOrganizationInput, StaffSessionUncheckedUpdateWithoutOrganizationInput>
+  }
+
+  export type StaffSessionUpdateManyWithWhereWithoutOrganizationInput = {
+    where: StaffSessionScalarWhereInput
+    data: XOR<StaffSessionUpdateManyMutationInput, StaffSessionUncheckedUpdateManyWithoutOrganizationInput>
+  }
+
+  export type StaffSessionScalarWhereInput = {
+    AND?: StaffSessionScalarWhereInput | StaffSessionScalarWhereInput[]
+    OR?: StaffSessionScalarWhereInput[]
+    NOT?: StaffSessionScalarWhereInput | StaffSessionScalarWhereInput[]
+    id?: UuidFilter<"StaffSession"> | string
+    organizationId?: UuidFilter<"StaffSession"> | string
+    userId?: UuidFilter<"StaffSession"> | string
+    refreshTokenHash?: StringFilter<"StaffSession"> | string
+    expiresAt?: DateTimeFilter<"StaffSession"> | Date | string
+    revokedAt?: DateTimeNullableFilter<"StaffSession"> | Date | string | null
+    createdAt?: DateTimeFilter<"StaffSession"> | Date | string
+    updatedAt?: DateTimeFilter<"StaffSession"> | Date | string
+  }
+
   export type UserUpsertWithoutOrganization_createdByInput = {
     update: XOR<UserUpdateWithoutOrganization_createdByInput, UserUncheckedUpdateWithoutOrganization_createdByInput>
     create: XOR<UserCreateWithoutOrganization_createdByInput, UserUncheckedCreateWithoutOrganization_createdByInput>
@@ -102436,6 +104108,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -102520,6 +104193,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -102609,6 +104283,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -102693,6 +104368,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -104162,6 +105838,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -104220,6 +105897,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -104281,6 +105959,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -104365,6 +106044,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -104448,6 +106128,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -104532,6 +106213,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -104624,6 +106306,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -104682,6 +106365,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -104749,6 +106433,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -104833,6 +106518,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -104922,6 +106608,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -105006,6 +106693,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -105121,6 +106809,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -105205,6 +106894,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -105288,6 +106978,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -105372,6 +107063,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -105673,6 +107365,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -105757,6 +107450,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -105846,6 +107540,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -105930,6 +107625,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -106157,6 +107853,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -106215,6 +107912,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -106276,6 +107974,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -106360,6 +108059,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -106443,6 +108143,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -106527,6 +108228,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -106970,6 +108672,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -107028,6 +108731,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -107095,6 +108799,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -107179,6 +108884,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -107268,6 +108974,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -107352,6 +109059,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -107580,6 +109288,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -107664,6 +109373,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
     driver_user?: DriverUncheckedCreateNestedOneWithoutUserInput
@@ -107745,6 +109455,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -107803,6 +109514,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -107864,6 +109576,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -107948,6 +109661,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -108031,6 +109745,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -108115,6 +109830,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -108925,6 +110641,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -109009,6 +110726,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
     driver_user?: DriverUncheckedUpdateOneWithoutUserNestedInput
@@ -109096,6 +110814,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -109154,6 +110873,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -109221,6 +110941,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -109305,6 +111026,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -109394,6 +111116,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -109478,6 +111201,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -109714,6 +111438,35 @@ export namespace Prisma {
     data: XOR<LostPropertyCaseUpdateManyMutationInput, LostPropertyCaseUncheckedUpdateManyWithoutParkInput>
   }
 
+  export type StaffSessionCreateWithoutUserInput = {
+    id?: string
+    refreshTokenHash: string
+    expiresAt: Date | string
+    revokedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    organization: OrganizationCreateNestedOneWithoutStaffSessionsInput
+  }
+
+  export type StaffSessionUncheckedCreateWithoutUserInput = {
+    id?: string
+    refreshTokenHash: string
+    expiresAt: Date | string
+    revokedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type StaffSessionCreateOrConnectWithoutUserInput = {
+    where: StaffSessionWhereUniqueInput
+    create: XOR<StaffSessionCreateWithoutUserInput, StaffSessionUncheckedCreateWithoutUserInput>
+  }
+
+  export type StaffSessionCreateManyUserInputEnvelope = {
+    data: StaffSessionCreateManyUserInput | StaffSessionCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type OrganizationCreateWithoutUser_organizationInput = {
     id?: string
     organizationCode: string
@@ -109730,6 +111483,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     role_organization?: RoleCreateNestedManyWithoutOrganizationInput
@@ -109788,6 +111542,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
     notification_organization?: NotificationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -109849,6 +111604,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -109933,6 +111689,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -110016,6 +111773,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -110100,6 +111858,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -111617,6 +113376,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleCreateNestedManyWithoutOrganizationInput
@@ -111674,6 +113434,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     deletedAt?: Date | string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -111739,6 +113500,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleCreateNestedManyWithoutOrganizationInput
@@ -111796,6 +113558,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     deletedAt?: Date | string | null
     createdById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -112291,6 +114054,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
     park_managerUser?: ParkCreateNestedManyWithoutManagerUserInput
@@ -112374,6 +114138,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     deletedAt?: Date | string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -112463,6 +114228,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     park_managerUser?: ParkCreateNestedManyWithoutManagerUserInput
@@ -112546,6 +114312,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     deletedAt?: Date | string | null
     createdById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -113585,6 +115352,22 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type StaffSessionUpsertWithWhereUniqueWithoutUserInput = {
+    where: StaffSessionWhereUniqueInput
+    update: XOR<StaffSessionUpdateWithoutUserInput, StaffSessionUncheckedUpdateWithoutUserInput>
+    create: XOR<StaffSessionCreateWithoutUserInput, StaffSessionUncheckedCreateWithoutUserInput>
+  }
+
+  export type StaffSessionUpdateWithWhereUniqueWithoutUserInput = {
+    where: StaffSessionWhereUniqueInput
+    data: XOR<StaffSessionUpdateWithoutUserInput, StaffSessionUncheckedUpdateWithoutUserInput>
+  }
+
+  export type StaffSessionUpdateManyWithWhereWithoutUserInput = {
+    where: StaffSessionScalarWhereInput
+    data: XOR<StaffSessionUpdateManyMutationInput, StaffSessionUncheckedUpdateManyWithoutUserInput>
+  }
+
   export type OrganizationUpsertWithoutUser_organizationInput = {
     update: XOR<OrganizationUpdateWithoutUser_organizationInput, OrganizationUncheckedUpdateWithoutUser_organizationInput>
     create: XOR<OrganizationCreateWithoutUser_organizationInput, OrganizationUncheckedCreateWithoutUser_organizationInput>
@@ -113612,6 +115395,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     role_organization?: RoleUpdateManyWithoutOrganizationNestedInput
@@ -113670,6 +115454,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
     notification_organization?: NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -113737,6 +115522,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -113821,6 +115607,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -113910,6 +115697,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -113994,6 +115782,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -115187,6 +116976,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -115245,6 +117035,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
     notification_organization?: NotificationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -115306,6 +117097,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -115390,6 +117182,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -115473,6 +117266,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -115557,6 +117351,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -115713,6 +117508,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -115771,6 +117567,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
     notification_organization?: NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -115838,6 +117635,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -115922,6 +117720,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -116011,6 +117810,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -116095,6 +117895,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -116254,6 +118055,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -116312,6 +118114,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     notification_organization?: NotificationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -116373,6 +118176,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -116457,6 +118261,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
     driver_user?: DriverUncheckedCreateNestedOneWithoutUserInput
@@ -116689,6 +118494,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -116773,6 +118579,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     driver_user?: DriverUncheckedCreateNestedOneWithoutUserInput
@@ -116865,6 +118672,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -116923,6 +118731,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     notification_organization?: NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -116990,6 +118799,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -117074,6 +118884,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
     driver_user?: DriverUncheckedUpdateOneWithoutUserNestedInput
@@ -117330,6 +119141,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -117414,6 +119226,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     driver_user?: DriverUncheckedUpdateOneWithoutUserNestedInput
@@ -117736,6 +119549,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -117820,6 +119634,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -117903,6 +119718,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -117987,6 +119803,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -118068,6 +119885,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -118126,6 +119944,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -118187,6 +120006,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -118271,6 +120091,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -118354,6 +120175,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -118438,6 +120260,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -119158,6 +120981,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -119242,6 +121066,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -119331,6 +121156,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -119415,6 +121241,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -119502,6 +121329,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -119560,6 +121388,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -119627,6 +121456,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -119711,6 +121541,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -119800,6 +121631,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -119884,6 +121716,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -120209,6 +122042,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -120267,6 +122101,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -120328,6 +122163,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -120412,6 +122248,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -120495,6 +122332,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -120579,6 +122417,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -120766,6 +122605,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -120824,6 +122664,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -120891,6 +122732,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -120975,6 +122817,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -121064,6 +122907,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -121148,6 +122992,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -121315,6 +123160,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -121399,6 +123245,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -121482,6 +123329,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -121566,6 +123414,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -121647,6 +123496,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -121705,6 +123555,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -121872,6 +123723,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -121956,6 +123808,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -122045,6 +123898,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -122129,6 +123983,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -122216,6 +124071,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -122274,6 +124130,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -122419,6 +124276,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -122503,6 +124361,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -122584,6 +124443,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -122642,6 +124502,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -122809,6 +124670,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -122893,6 +124755,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -122980,6 +124843,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -123038,6 +124902,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -123183,6 +125048,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -123267,6 +125133,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -123521,6 +125388,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -123579,6 +125447,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -123746,6 +125615,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -123830,6 +125700,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -124108,6 +125979,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -124166,6 +126038,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -124285,6 +126158,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -124369,6 +126243,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -124450,6 +126325,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -124508,6 +126384,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -124569,6 +126446,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -124653,6 +126531,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -124736,6 +126615,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -124820,6 +126700,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -125020,6 +126901,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -125104,6 +126986,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -125191,6 +127074,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -125249,6 +127133,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -125316,6 +127201,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -125400,6 +127286,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -125489,6 +127376,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -125573,6 +127461,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -125754,6 +127643,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -125812,6 +127702,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -125873,6 +127764,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -125957,6 +127849,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -126040,6 +127933,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -126124,6 +128018,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -126427,6 +128322,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -126485,6 +128381,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -126552,6 +128449,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -126636,6 +128534,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -126725,6 +128624,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -126809,6 +128709,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -127023,6 +128924,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -127081,6 +128983,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -127142,6 +129045,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -127226,6 +129130,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -127309,6 +129214,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -127393,6 +129299,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -128124,6 +130031,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -128182,6 +130090,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -128249,6 +130158,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -128333,6 +130243,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -128422,6 +130333,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -128506,6 +130418,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -128837,6 +130750,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -128921,6 +130835,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -129004,6 +130919,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -129088,6 +131004,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -129169,6 +131086,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -129227,6 +131145,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -129382,6 +131301,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -129466,6 +131386,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -129555,6 +131476,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -129639,6 +131561,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -129726,6 +131649,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -129784,6 +131708,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -129960,6 +131885,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -130044,6 +131970,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -130125,6 +132052,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -130183,6 +132111,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -130387,6 +132316,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -130471,6 +132401,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -130558,6 +132489,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -130616,6 +132548,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -130838,6 +132771,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -130922,6 +132856,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -131003,6 +132938,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -131061,6 +132997,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -131411,6 +133348,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -131495,6 +133433,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -131582,6 +133521,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -131640,6 +133580,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -131848,6 +133789,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -131932,6 +133874,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -132013,6 +133956,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -132071,6 +134015,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -132275,6 +134220,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -132359,6 +134305,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -132446,6 +134393,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -132504,6 +134452,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -132558,6 +134507,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -132616,6 +134566,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -132677,6 +134628,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -132761,6 +134713,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -132844,6 +134797,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -132928,6 +134882,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -133302,6 +135257,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -133360,6 +135316,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -133427,6 +135384,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -133511,6 +135469,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -133600,6 +135559,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -133684,6 +135644,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -133905,6 +135866,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -133963,6 +135925,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -134024,6 +135987,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -134108,6 +136072,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -134191,6 +136156,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -134275,6 +136241,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -134422,6 +136389,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -134480,6 +136448,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -134547,6 +136516,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -134631,6 +136601,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -134720,6 +136691,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -134804,6 +136776,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -134992,6 +136965,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -135050,6 +137024,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -135111,6 +137086,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -135195,6 +137171,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -135278,6 +137255,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -135362,6 +137340,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -135578,6 +137557,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -135636,6 +137616,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -135703,6 +137684,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -135787,6 +137769,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -135876,6 +137859,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -135960,6 +137944,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -136227,6 +138212,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -136311,6 +138297,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -136392,6 +138379,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -136450,6 +138438,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -136829,6 +138818,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -136913,6 +138903,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -137000,6 +138991,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -137058,6 +139050,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -137223,6 +139216,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -137307,6 +139301,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -137388,6 +139383,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -137446,6 +139442,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -137644,6 +139641,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -137728,6 +139726,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -137815,6 +139814,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -137873,6 +139873,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -139905,6 +141906,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -139963,6 +141965,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -140351,6 +142354,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -140409,6 +142413,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -140974,6 +142979,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -141032,6 +143038,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -141892,6 +143899,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -141950,6 +143958,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -142137,6 +144146,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -142195,6 +144205,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -142324,6 +144335,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -142382,6 +144394,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -142518,6 +144531,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -142576,6 +144590,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -142740,6 +144755,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -142798,6 +144814,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -143240,6 +145257,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -143324,6 +145342,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -143405,6 +145424,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -143463,6 +145483,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -143992,6 +146013,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -144076,6 +146098,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -144163,6 +146186,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -144221,6 +146245,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -144344,6 +146369,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -144428,6 +146454,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -144613,6 +146640,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -144671,6 +146699,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -144800,6 +146829,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -144884,6 +146914,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -145087,6 +147118,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -145145,6 +147177,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -145636,6 +147669,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -145720,6 +147754,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -145803,6 +147838,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -145887,6 +147923,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -145968,6 +148005,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -146026,6 +148064,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -146698,6 +148737,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -146782,6 +148822,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -146871,6 +148912,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -146955,6 +148997,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -147042,6 +149085,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -147100,6 +149144,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -147265,6 +149310,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -147349,6 +149395,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -147534,6 +149581,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -147592,6 +149640,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -147731,6 +149780,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -147815,6 +149865,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -148018,6 +150069,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -148076,6 +150128,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -148193,6 +150246,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -148277,6 +150331,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -148462,6 +150517,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -148520,6 +150576,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -148659,6 +150716,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -148743,6 +150801,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -148946,6 +151005,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -149004,6 +151064,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -149446,6 +151507,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -149530,6 +151592,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -149611,6 +151674,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -149669,6 +151733,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -150198,6 +152263,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -150282,6 +152348,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -150369,6 +152436,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -150427,6 +152495,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -150552,6 +152621,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -150636,6 +152706,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -150821,6 +152892,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -150879,6 +152951,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -151010,6 +153083,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -151094,6 +153168,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -151297,6 +153372,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -151355,6 +153431,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -151409,6 +153486,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -151467,6 +153545,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -151528,6 +153607,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -151612,6 +153692,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -151763,6 +153844,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -151821,6 +153903,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -151888,6 +153971,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -151972,6 +154056,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -152113,6 +154198,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -152171,6 +154257,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -152232,6 +154319,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -152316,6 +154404,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -152408,6 +154497,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -152466,6 +154556,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -152533,6 +154624,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -152617,6 +154709,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -152693,6 +154786,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutOrganizationInput
     createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
     updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
     user_organization?: UserCreateNestedManyWithoutOrganizationInput
@@ -152751,6 +154845,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutOrganizationInput
     user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
     userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -152812,6 +154907,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -152896,6 +154992,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -153092,6 +155189,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
@@ -153150,6 +155248,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -153217,6 +155316,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -153301,6 +155401,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -153495,6 +155596,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    staffSessions?: StaffSessionCreateNestedManyWithoutUserInput
     organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
     createdBy?: UserCreateNestedOneWithoutUser_createdByInput
     updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
@@ -153579,6 +155681,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdById?: string | null
     updatedById?: string | null
+    staffSessions?: StaffSessionUncheckedCreateNestedManyWithoutUserInput
     park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
     userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
@@ -153673,6 +155776,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
@@ -153757,6 +155861,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -153815,6 +155920,604 @@ export namespace Prisma {
     routeStop_updatedBy?: RouteStopUncheckedUpdateManyWithoutUpdatedByNestedInput
     parkRoute_createdBy?: ParkRouteUncheckedUpdateManyWithoutCreatedByNestedInput
     parkRoute_updatedBy?: ParkRouteUncheckedUpdateManyWithoutUpdatedByNestedInput
+  }
+
+  export type UserCreateWithoutStaffSessionsInput = {
+    id?: string
+    firstName: string
+    lastName: string
+    email?: string | null
+    phone?: string | null
+    passwordHash?: string | null
+    externalAuthSubject?: string | null
+    status?: $Enums.UserStatus
+    lastLoginAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
+    mfaEnabled?: boolean
+    emailVerifiedAt?: Date | string | null
+    phoneVerifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    organization?: OrganizationCreateNestedOneWithoutUser_organizationInput
+    createdBy?: UserCreateNestedOneWithoutUser_createdByInput
+    updatedBy?: UserCreateNestedOneWithoutUser_updatedByInput
+    park_managerUser?: ParkCreateNestedManyWithoutManagerUserInput
+    userRole_user?: UserRoleCreateNestedManyWithoutUserInput
+    userRole_grantedBy?: UserRoleCreateNestedManyWithoutGrantedByInput
+    driver_user?: DriverCreateNestedOneWithoutUserInput
+    driver_verifiedBy?: DriverCreateNestedManyWithoutVerifiedByInput
+    driverDocument_verifiedBy?: DriverDocumentCreateNestedManyWithoutVerifiedByInput
+    driverDocument_uploadedBy?: DriverDocumentCreateNestedManyWithoutUploadedByInput
+    driverStatusHistory_changedBy?: DriverStatusHistoryCreateNestedManyWithoutChangedByInput
+    driverDisciplinaryAction_issuedBy?: DriverDisciplinaryActionCreateNestedManyWithoutIssuedByInput
+    conductor_user?: ConductorCreateNestedOneWithoutUserInput
+    vehicleDocument_verifiedBy?: VehicleDocumentCreateNestedManyWithoutVerifiedByInput
+    vehicleDocument_uploadedBy?: VehicleDocumentCreateNestedManyWithoutUploadedByInput
+    vehicleOwnershipHistory_recordedBy?: VehicleOwnershipHistoryCreateNestedManyWithoutRecordedByInput
+    driverVehicleAssignment_assignedBy?: DriverVehicleAssignmentCreateNestedManyWithoutAssignedByInput
+    vehicleCrewAssignment_assignedBy?: VehicleCrewAssignmentCreateNestedManyWithoutAssignedByInput
+    vehicleRouteAssignment_assignedBy?: VehicleRouteAssignmentCreateNestedManyWithoutAssignedByInput
+    vehicleQrCode_issuedBy?: VehicleQrCodeCreateNestedManyWithoutIssuedByInput
+    complaint_assignedTo?: ComplaintCreateNestedManyWithoutAssignedToInput
+    complaintUpdate_updatedBy?: ComplaintUpdateCreateNestedManyWithoutUpdatedByInput
+    incident_reporterUser?: IncidentCreateNestedManyWithoutReporterUserInput
+    incident_assignedTo?: IncidentCreateNestedManyWithoutAssignedToInput
+    incidentEvidence_uploadedBy?: IncidentEvidenceCreateNestedManyWithoutUploadedByInput
+    incidentUpdate_updatedBy?: IncidentUpdateCreateNestedManyWithoutUpdatedByInput
+    lostPropertyCase_assignedTo?: LostPropertyCaseCreateNestedManyWithoutAssignedToInput
+    lostPropertyUpdate_updatedBy?: LostPropertyUpdateCreateNestedManyWithoutUpdatedByInput
+    notification_recipientUser?: NotificationCreateNestedManyWithoutRecipientUserInput
+    auditLog_actorUser?: AuditLogCreateNestedManyWithoutActorUserInput
+    securityEvent_user?: SecurityEventCreateNestedManyWithoutUserInput
+    systemSetting_updatedBy?: SystemSettingCreateNestedManyWithoutUpdatedByInput
+    organization_createdBy?: OrganizationCreateNestedManyWithoutCreatedByInput
+    organization_updatedBy?: OrganizationCreateNestedManyWithoutUpdatedByInput
+    organizationSettings_createdBy?: OrganizationSettingsCreateNestedManyWithoutCreatedByInput
+    organizationSettings_updatedBy?: OrganizationSettingsCreateNestedManyWithoutUpdatedByInput
+    administrativeArea_createdBy?: AdministrativeAreaCreateNestedManyWithoutCreatedByInput
+    administrativeArea_updatedBy?: AdministrativeAreaCreateNestedManyWithoutUpdatedByInput
+    organizationUnit_createdBy?: OrganizationUnitCreateNestedManyWithoutCreatedByInput
+    organizationUnit_updatedBy?: OrganizationUnitCreateNestedManyWithoutUpdatedByInput
+    park_createdBy?: ParkCreateNestedManyWithoutCreatedByInput
+    park_updatedBy?: ParkCreateNestedManyWithoutUpdatedByInput
+    user_createdBy?: UserCreateNestedManyWithoutCreatedByInput
+    user_updatedBy?: UserCreateNestedManyWithoutUpdatedByInput
+    role_createdBy?: RoleCreateNestedManyWithoutCreatedByInput
+    role_updatedBy?: RoleCreateNestedManyWithoutUpdatedByInput
+    driver_createdBy?: DriverCreateNestedManyWithoutCreatedByInput
+    driver_updatedBy?: DriverCreateNestedManyWithoutUpdatedByInput
+    driverContact_createdBy?: DriverContactCreateNestedManyWithoutCreatedByInput
+    driverContact_updatedBy?: DriverContactCreateNestedManyWithoutUpdatedByInput
+    conductor_createdBy?: ConductorCreateNestedManyWithoutCreatedByInput
+    conductor_updatedBy?: ConductorCreateNestedManyWithoutUpdatedByInput
+    vehicleOwner_createdBy?: VehicleOwnerCreateNestedManyWithoutCreatedByInput
+    vehicleOwner_updatedBy?: VehicleOwnerCreateNestedManyWithoutUpdatedByInput
+    vehicle_createdBy?: VehicleCreateNestedManyWithoutCreatedByInput
+    vehicle_updatedBy?: VehicleCreateNestedManyWithoutUpdatedByInput
+    route_createdBy?: RouteCreateNestedManyWithoutCreatedByInput
+    route_updatedBy?: RouteCreateNestedManyWithoutUpdatedByInput
+    routeStop_createdBy?: RouteStopCreateNestedManyWithoutCreatedByInput
+    routeStop_updatedBy?: RouteStopCreateNestedManyWithoutUpdatedByInput
+    parkRoute_createdBy?: ParkRouteCreateNestedManyWithoutCreatedByInput
+    parkRoute_updatedBy?: ParkRouteCreateNestedManyWithoutUpdatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutStaffSessionsInput = {
+    id?: string
+    organizationId?: string | null
+    firstName: string
+    lastName: string
+    email?: string | null
+    phone?: string | null
+    passwordHash?: string | null
+    externalAuthSubject?: string | null
+    status?: $Enums.UserStatus
+    lastLoginAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
+    mfaEnabled?: boolean
+    emailVerifiedAt?: Date | string | null
+    phoneVerifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    createdById?: string | null
+    updatedById?: string | null
+    park_managerUser?: ParkUncheckedCreateNestedManyWithoutManagerUserInput
+    userRole_user?: UserRoleUncheckedCreateNestedManyWithoutUserInput
+    userRole_grantedBy?: UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
+    driver_user?: DriverUncheckedCreateNestedOneWithoutUserInput
+    driver_verifiedBy?: DriverUncheckedCreateNestedManyWithoutVerifiedByInput
+    driverDocument_verifiedBy?: DriverDocumentUncheckedCreateNestedManyWithoutVerifiedByInput
+    driverDocument_uploadedBy?: DriverDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+    driverStatusHistory_changedBy?: DriverStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
+    driverDisciplinaryAction_issuedBy?: DriverDisciplinaryActionUncheckedCreateNestedManyWithoutIssuedByInput
+    conductor_user?: ConductorUncheckedCreateNestedOneWithoutUserInput
+    vehicleDocument_verifiedBy?: VehicleDocumentUncheckedCreateNestedManyWithoutVerifiedByInput
+    vehicleDocument_uploadedBy?: VehicleDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+    vehicleOwnershipHistory_recordedBy?: VehicleOwnershipHistoryUncheckedCreateNestedManyWithoutRecordedByInput
+    driverVehicleAssignment_assignedBy?: DriverVehicleAssignmentUncheckedCreateNestedManyWithoutAssignedByInput
+    vehicleCrewAssignment_assignedBy?: VehicleCrewAssignmentUncheckedCreateNestedManyWithoutAssignedByInput
+    vehicleRouteAssignment_assignedBy?: VehicleRouteAssignmentUncheckedCreateNestedManyWithoutAssignedByInput
+    vehicleQrCode_issuedBy?: VehicleQrCodeUncheckedCreateNestedManyWithoutIssuedByInput
+    complaint_assignedTo?: ComplaintUncheckedCreateNestedManyWithoutAssignedToInput
+    complaintUpdate_updatedBy?: ComplaintUpdateUncheckedCreateNestedManyWithoutUpdatedByInput
+    incident_reporterUser?: IncidentUncheckedCreateNestedManyWithoutReporterUserInput
+    incident_assignedTo?: IncidentUncheckedCreateNestedManyWithoutAssignedToInput
+    incidentEvidence_uploadedBy?: IncidentEvidenceUncheckedCreateNestedManyWithoutUploadedByInput
+    incidentUpdate_updatedBy?: IncidentUpdateUncheckedCreateNestedManyWithoutUpdatedByInput
+    lostPropertyCase_assignedTo?: LostPropertyCaseUncheckedCreateNestedManyWithoutAssignedToInput
+    lostPropertyUpdate_updatedBy?: LostPropertyUpdateUncheckedCreateNestedManyWithoutUpdatedByInput
+    notification_recipientUser?: NotificationUncheckedCreateNestedManyWithoutRecipientUserInput
+    auditLog_actorUser?: AuditLogUncheckedCreateNestedManyWithoutActorUserInput
+    securityEvent_user?: SecurityEventUncheckedCreateNestedManyWithoutUserInput
+    systemSetting_updatedBy?: SystemSettingUncheckedCreateNestedManyWithoutUpdatedByInput
+    organization_createdBy?: OrganizationUncheckedCreateNestedManyWithoutCreatedByInput
+    organization_updatedBy?: OrganizationUncheckedCreateNestedManyWithoutUpdatedByInput
+    organizationSettings_createdBy?: OrganizationSettingsUncheckedCreateNestedManyWithoutCreatedByInput
+    organizationSettings_updatedBy?: OrganizationSettingsUncheckedCreateNestedManyWithoutUpdatedByInput
+    administrativeArea_createdBy?: AdministrativeAreaUncheckedCreateNestedManyWithoutCreatedByInput
+    administrativeArea_updatedBy?: AdministrativeAreaUncheckedCreateNestedManyWithoutUpdatedByInput
+    organizationUnit_createdBy?: OrganizationUnitUncheckedCreateNestedManyWithoutCreatedByInput
+    organizationUnit_updatedBy?: OrganizationUnitUncheckedCreateNestedManyWithoutUpdatedByInput
+    park_createdBy?: ParkUncheckedCreateNestedManyWithoutCreatedByInput
+    park_updatedBy?: ParkUncheckedCreateNestedManyWithoutUpdatedByInput
+    user_createdBy?: UserUncheckedCreateNestedManyWithoutCreatedByInput
+    user_updatedBy?: UserUncheckedCreateNestedManyWithoutUpdatedByInput
+    role_createdBy?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
+    role_updatedBy?: RoleUncheckedCreateNestedManyWithoutUpdatedByInput
+    driver_createdBy?: DriverUncheckedCreateNestedManyWithoutCreatedByInput
+    driver_updatedBy?: DriverUncheckedCreateNestedManyWithoutUpdatedByInput
+    driverContact_createdBy?: DriverContactUncheckedCreateNestedManyWithoutCreatedByInput
+    driverContact_updatedBy?: DriverContactUncheckedCreateNestedManyWithoutUpdatedByInput
+    conductor_createdBy?: ConductorUncheckedCreateNestedManyWithoutCreatedByInput
+    conductor_updatedBy?: ConductorUncheckedCreateNestedManyWithoutUpdatedByInput
+    vehicleOwner_createdBy?: VehicleOwnerUncheckedCreateNestedManyWithoutCreatedByInput
+    vehicleOwner_updatedBy?: VehicleOwnerUncheckedCreateNestedManyWithoutUpdatedByInput
+    vehicle_createdBy?: VehicleUncheckedCreateNestedManyWithoutCreatedByInput
+    vehicle_updatedBy?: VehicleUncheckedCreateNestedManyWithoutUpdatedByInput
+    route_createdBy?: RouteUncheckedCreateNestedManyWithoutCreatedByInput
+    route_updatedBy?: RouteUncheckedCreateNestedManyWithoutUpdatedByInput
+    routeStop_createdBy?: RouteStopUncheckedCreateNestedManyWithoutCreatedByInput
+    routeStop_updatedBy?: RouteStopUncheckedCreateNestedManyWithoutUpdatedByInput
+    parkRoute_createdBy?: ParkRouteUncheckedCreateNestedManyWithoutCreatedByInput
+    parkRoute_updatedBy?: ParkRouteUncheckedCreateNestedManyWithoutUpdatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutStaffSessionsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutStaffSessionsInput, UserUncheckedCreateWithoutStaffSessionsInput>
+  }
+
+  export type OrganizationCreateWithoutStaffSessionsInput = {
+    id?: string
+    organizationCode: string
+    name: string
+    shortName?: string | null
+    organizationType: $Enums.OrganizationType
+    registrationNumber?: string | null
+    email?: string | null
+    phone?: string | null
+    address?: string | null
+    countryCode?: string
+    status?: $Enums.OrganizationStatus
+    logoUrl?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    createdBy?: UserCreateNestedOneWithoutOrganization_createdByInput
+    updatedBy?: UserCreateNestedOneWithoutOrganization_updatedByInput
+    user_organization?: UserCreateNestedManyWithoutOrganizationInput
+    role_organization?: RoleCreateNestedManyWithoutOrganizationInput
+    userRole_organization?: UserRoleCreateNestedManyWithoutOrganizationInput
+    notification_organization?: NotificationCreateNestedManyWithoutOrganizationInput
+    auditLog_organization?: AuditLogCreateNestedManyWithoutOrganizationInput
+    securityEvent_organization?: SecurityEventCreateNestedManyWithoutOrganizationInput
+    organizationSettings_organization?: OrganizationSettingsCreateNestedOneWithoutOrganizationInput
+    organizationUnit_organization?: OrganizationUnitCreateNestedManyWithoutOrganizationInput
+    park_organization?: ParkCreateNestedManyWithoutOrganizationInput
+    driver_organization?: DriverCreateNestedManyWithoutOrganizationInput
+    driverContact_organization?: DriverContactCreateNestedManyWithoutOrganizationInput
+    driverDocument_organization?: DriverDocumentCreateNestedManyWithoutOrganizationInput
+    driverStatusHistory_organization?: DriverStatusHistoryCreateNestedManyWithoutOrganizationInput
+    driverDisciplinaryAction_organization?: DriverDisciplinaryActionCreateNestedManyWithoutOrganizationInput
+    conductor_organization?: ConductorCreateNestedManyWithoutOrganizationInput
+    vehicleOwner_organization?: VehicleOwnerCreateNestedManyWithoutOrganizationInput
+    vehicle_organization?: VehicleCreateNestedManyWithoutOrganizationInput
+    vehicleDocument_organization?: VehicleDocumentCreateNestedManyWithoutOrganizationInput
+    vehicleOwnershipHistory_organization?: VehicleOwnershipHistoryCreateNestedManyWithoutOrganizationInput
+    driverVehicleAssignment_organization?: DriverVehicleAssignmentCreateNestedManyWithoutOrganizationInput
+    vehicleCrewAssignment_organization?: VehicleCrewAssignmentCreateNestedManyWithoutOrganizationInput
+    route_organization?: RouteCreateNestedManyWithoutOrganizationInput
+    routeStop_organization?: RouteStopCreateNestedManyWithoutOrganizationInput
+    parkRoute_organization?: ParkRouteCreateNestedManyWithoutOrganizationInput
+    vehicleRouteAssignment_organization?: VehicleRouteAssignmentCreateNestedManyWithoutOrganizationInput
+    vehicleQrCode_organization?: VehicleQrCodeCreateNestedManyWithoutOrganizationInput
+    verificationScan_organization?: VerificationScanCreateNestedManyWithoutOrganizationInput
+    journey_organization?: JourneyCreateNestedManyWithoutOrganizationInput
+    journeyEvent_organization?: JourneyEventCreateNestedManyWithoutOrganizationInput
+    journeyShare_organization?: JourneyShareCreateNestedManyWithoutOrganizationInput
+    complaint_organization?: ComplaintCreateNestedManyWithoutOrganizationInput
+    complaintUpdate_organization?: ComplaintUpdateCreateNestedManyWithoutOrganizationInput
+    incident_organization?: IncidentCreateNestedManyWithoutOrganizationInput
+    incidentEvidence_organization?: IncidentEvidenceCreateNestedManyWithoutOrganizationInput
+    incidentUpdate_organization?: IncidentUpdateCreateNestedManyWithoutOrganizationInput
+    lostPropertyCase_organization?: LostPropertyCaseCreateNestedManyWithoutOrganizationInput
+    lostPropertyUpdate_organization?: LostPropertyUpdateCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationUncheckedCreateWithoutStaffSessionsInput = {
+    id?: string
+    organizationCode: string
+    name: string
+    shortName?: string | null
+    organizationType: $Enums.OrganizationType
+    registrationNumber?: string | null
+    email?: string | null
+    phone?: string | null
+    address?: string | null
+    countryCode?: string
+    status?: $Enums.OrganizationStatus
+    logoUrl?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    createdById?: string | null
+    updatedById?: string | null
+    user_organization?: UserUncheckedCreateNestedManyWithoutOrganizationInput
+    role_organization?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
+    userRole_organization?: UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
+    notification_organization?: NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+    auditLog_organization?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+    securityEvent_organization?: SecurityEventUncheckedCreateNestedManyWithoutOrganizationInput
+    organizationSettings_organization?: OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
+    organizationUnit_organization?: OrganizationUnitUncheckedCreateNestedManyWithoutOrganizationInput
+    park_organization?: ParkUncheckedCreateNestedManyWithoutOrganizationInput
+    driver_organization?: DriverUncheckedCreateNestedManyWithoutOrganizationInput
+    driverContact_organization?: DriverContactUncheckedCreateNestedManyWithoutOrganizationInput
+    driverDocument_organization?: DriverDocumentUncheckedCreateNestedManyWithoutOrganizationInput
+    driverStatusHistory_organization?: DriverStatusHistoryUncheckedCreateNestedManyWithoutOrganizationInput
+    driverDisciplinaryAction_organization?: DriverDisciplinaryActionUncheckedCreateNestedManyWithoutOrganizationInput
+    conductor_organization?: ConductorUncheckedCreateNestedManyWithoutOrganizationInput
+    vehicleOwner_organization?: VehicleOwnerUncheckedCreateNestedManyWithoutOrganizationInput
+    vehicle_organization?: VehicleUncheckedCreateNestedManyWithoutOrganizationInput
+    vehicleDocument_organization?: VehicleDocumentUncheckedCreateNestedManyWithoutOrganizationInput
+    vehicleOwnershipHistory_organization?: VehicleOwnershipHistoryUncheckedCreateNestedManyWithoutOrganizationInput
+    driverVehicleAssignment_organization?: DriverVehicleAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+    vehicleCrewAssignment_organization?: VehicleCrewAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+    route_organization?: RouteUncheckedCreateNestedManyWithoutOrganizationInput
+    routeStop_organization?: RouteStopUncheckedCreateNestedManyWithoutOrganizationInput
+    parkRoute_organization?: ParkRouteUncheckedCreateNestedManyWithoutOrganizationInput
+    vehicleRouteAssignment_organization?: VehicleRouteAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+    vehicleQrCode_organization?: VehicleQrCodeUncheckedCreateNestedManyWithoutOrganizationInput
+    verificationScan_organization?: VerificationScanUncheckedCreateNestedManyWithoutOrganizationInput
+    journey_organization?: JourneyUncheckedCreateNestedManyWithoutOrganizationInput
+    journeyEvent_organization?: JourneyEventUncheckedCreateNestedManyWithoutOrganizationInput
+    journeyShare_organization?: JourneyShareUncheckedCreateNestedManyWithoutOrganizationInput
+    complaint_organization?: ComplaintUncheckedCreateNestedManyWithoutOrganizationInput
+    complaintUpdate_organization?: ComplaintUpdateUncheckedCreateNestedManyWithoutOrganizationInput
+    incident_organization?: IncidentUncheckedCreateNestedManyWithoutOrganizationInput
+    incidentEvidence_organization?: IncidentEvidenceUncheckedCreateNestedManyWithoutOrganizationInput
+    incidentUpdate_organization?: IncidentUpdateUncheckedCreateNestedManyWithoutOrganizationInput
+    lostPropertyCase_organization?: LostPropertyCaseUncheckedCreateNestedManyWithoutOrganizationInput
+    lostPropertyUpdate_organization?: LostPropertyUpdateUncheckedCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationCreateOrConnectWithoutStaffSessionsInput = {
+    where: OrganizationWhereUniqueInput
+    create: XOR<OrganizationCreateWithoutStaffSessionsInput, OrganizationUncheckedCreateWithoutStaffSessionsInput>
+  }
+
+  export type UserUpsertWithoutStaffSessionsInput = {
+    update: XOR<UserUpdateWithoutStaffSessionsInput, UserUncheckedUpdateWithoutStaffSessionsInput>
+    create: XOR<UserCreateWithoutStaffSessionsInput, UserUncheckedCreateWithoutStaffSessionsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutStaffSessionsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutStaffSessionsInput, UserUncheckedUpdateWithoutStaffSessionsInput>
+  }
+
+  export type UserUpdateWithoutStaffSessionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    externalAuthSubject?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mfaEnabled?: BoolFieldUpdateOperationsInput | boolean
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    phoneVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
+    createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
+    updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
+    park_managerUser?: ParkUpdateManyWithoutManagerUserNestedInput
+    userRole_user?: UserRoleUpdateManyWithoutUserNestedInput
+    userRole_grantedBy?: UserRoleUpdateManyWithoutGrantedByNestedInput
+    driver_user?: DriverUpdateOneWithoutUserNestedInput
+    driver_verifiedBy?: DriverUpdateManyWithoutVerifiedByNestedInput
+    driverDocument_verifiedBy?: DriverDocumentUpdateManyWithoutVerifiedByNestedInput
+    driverDocument_uploadedBy?: DriverDocumentUpdateManyWithoutUploadedByNestedInput
+    driverStatusHistory_changedBy?: DriverStatusHistoryUpdateManyWithoutChangedByNestedInput
+    driverDisciplinaryAction_issuedBy?: DriverDisciplinaryActionUpdateManyWithoutIssuedByNestedInput
+    conductor_user?: ConductorUpdateOneWithoutUserNestedInput
+    vehicleDocument_verifiedBy?: VehicleDocumentUpdateManyWithoutVerifiedByNestedInput
+    vehicleDocument_uploadedBy?: VehicleDocumentUpdateManyWithoutUploadedByNestedInput
+    vehicleOwnershipHistory_recordedBy?: VehicleOwnershipHistoryUpdateManyWithoutRecordedByNestedInput
+    driverVehicleAssignment_assignedBy?: DriverVehicleAssignmentUpdateManyWithoutAssignedByNestedInput
+    vehicleCrewAssignment_assignedBy?: VehicleCrewAssignmentUpdateManyWithoutAssignedByNestedInput
+    vehicleRouteAssignment_assignedBy?: VehicleRouteAssignmentUpdateManyWithoutAssignedByNestedInput
+    vehicleQrCode_issuedBy?: VehicleQrCodeUpdateManyWithoutIssuedByNestedInput
+    complaint_assignedTo?: ComplaintUpdateManyWithoutAssignedToNestedInput
+    complaintUpdate_updatedBy?: ComplaintUpdateUpdateManyWithoutUpdatedByNestedInput
+    incident_reporterUser?: IncidentUpdateManyWithoutReporterUserNestedInput
+    incident_assignedTo?: IncidentUpdateManyWithoutAssignedToNestedInput
+    incidentEvidence_uploadedBy?: IncidentEvidenceUpdateManyWithoutUploadedByNestedInput
+    incidentUpdate_updatedBy?: IncidentUpdateUpdateManyWithoutUpdatedByNestedInput
+    lostPropertyCase_assignedTo?: LostPropertyCaseUpdateManyWithoutAssignedToNestedInput
+    lostPropertyUpdate_updatedBy?: LostPropertyUpdateUpdateManyWithoutUpdatedByNestedInput
+    notification_recipientUser?: NotificationUpdateManyWithoutRecipientUserNestedInput
+    auditLog_actorUser?: AuditLogUpdateManyWithoutActorUserNestedInput
+    securityEvent_user?: SecurityEventUpdateManyWithoutUserNestedInput
+    systemSetting_updatedBy?: SystemSettingUpdateManyWithoutUpdatedByNestedInput
+    organization_createdBy?: OrganizationUpdateManyWithoutCreatedByNestedInput
+    organization_updatedBy?: OrganizationUpdateManyWithoutUpdatedByNestedInput
+    organizationSettings_createdBy?: OrganizationSettingsUpdateManyWithoutCreatedByNestedInput
+    organizationSettings_updatedBy?: OrganizationSettingsUpdateManyWithoutUpdatedByNestedInput
+    administrativeArea_createdBy?: AdministrativeAreaUpdateManyWithoutCreatedByNestedInput
+    administrativeArea_updatedBy?: AdministrativeAreaUpdateManyWithoutUpdatedByNestedInput
+    organizationUnit_createdBy?: OrganizationUnitUpdateManyWithoutCreatedByNestedInput
+    organizationUnit_updatedBy?: OrganizationUnitUpdateManyWithoutUpdatedByNestedInput
+    park_createdBy?: ParkUpdateManyWithoutCreatedByNestedInput
+    park_updatedBy?: ParkUpdateManyWithoutUpdatedByNestedInput
+    user_createdBy?: UserUpdateManyWithoutCreatedByNestedInput
+    user_updatedBy?: UserUpdateManyWithoutUpdatedByNestedInput
+    role_createdBy?: RoleUpdateManyWithoutCreatedByNestedInput
+    role_updatedBy?: RoleUpdateManyWithoutUpdatedByNestedInput
+    driver_createdBy?: DriverUpdateManyWithoutCreatedByNestedInput
+    driver_updatedBy?: DriverUpdateManyWithoutUpdatedByNestedInput
+    driverContact_createdBy?: DriverContactUpdateManyWithoutCreatedByNestedInput
+    driverContact_updatedBy?: DriverContactUpdateManyWithoutUpdatedByNestedInput
+    conductor_createdBy?: ConductorUpdateManyWithoutCreatedByNestedInput
+    conductor_updatedBy?: ConductorUpdateManyWithoutUpdatedByNestedInput
+    vehicleOwner_createdBy?: VehicleOwnerUpdateManyWithoutCreatedByNestedInput
+    vehicleOwner_updatedBy?: VehicleOwnerUpdateManyWithoutUpdatedByNestedInput
+    vehicle_createdBy?: VehicleUpdateManyWithoutCreatedByNestedInput
+    vehicle_updatedBy?: VehicleUpdateManyWithoutUpdatedByNestedInput
+    route_createdBy?: RouteUpdateManyWithoutCreatedByNestedInput
+    route_updatedBy?: RouteUpdateManyWithoutUpdatedByNestedInput
+    routeStop_createdBy?: RouteStopUpdateManyWithoutCreatedByNestedInput
+    routeStop_updatedBy?: RouteStopUpdateManyWithoutUpdatedByNestedInput
+    parkRoute_createdBy?: ParkRouteUpdateManyWithoutCreatedByNestedInput
+    parkRoute_updatedBy?: ParkRouteUpdateManyWithoutUpdatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutStaffSessionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: NullableStringFieldUpdateOperationsInput | string | null
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    externalAuthSubject?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mfaEnabled?: BoolFieldUpdateOperationsInput | boolean
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    phoneVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
+    userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
+    userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
+    driver_user?: DriverUncheckedUpdateOneWithoutUserNestedInput
+    driver_verifiedBy?: DriverUncheckedUpdateManyWithoutVerifiedByNestedInput
+    driverDocument_verifiedBy?: DriverDocumentUncheckedUpdateManyWithoutVerifiedByNestedInput
+    driverDocument_uploadedBy?: DriverDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+    driverStatusHistory_changedBy?: DriverStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
+    driverDisciplinaryAction_issuedBy?: DriverDisciplinaryActionUncheckedUpdateManyWithoutIssuedByNestedInput
+    conductor_user?: ConductorUncheckedUpdateOneWithoutUserNestedInput
+    vehicleDocument_verifiedBy?: VehicleDocumentUncheckedUpdateManyWithoutVerifiedByNestedInput
+    vehicleDocument_uploadedBy?: VehicleDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+    vehicleOwnershipHistory_recordedBy?: VehicleOwnershipHistoryUncheckedUpdateManyWithoutRecordedByNestedInput
+    driverVehicleAssignment_assignedBy?: DriverVehicleAssignmentUncheckedUpdateManyWithoutAssignedByNestedInput
+    vehicleCrewAssignment_assignedBy?: VehicleCrewAssignmentUncheckedUpdateManyWithoutAssignedByNestedInput
+    vehicleRouteAssignment_assignedBy?: VehicleRouteAssignmentUncheckedUpdateManyWithoutAssignedByNestedInput
+    vehicleQrCode_issuedBy?: VehicleQrCodeUncheckedUpdateManyWithoutIssuedByNestedInput
+    complaint_assignedTo?: ComplaintUncheckedUpdateManyWithoutAssignedToNestedInput
+    complaintUpdate_updatedBy?: ComplaintUpdateUncheckedUpdateManyWithoutUpdatedByNestedInput
+    incident_reporterUser?: IncidentUncheckedUpdateManyWithoutReporterUserNestedInput
+    incident_assignedTo?: IncidentUncheckedUpdateManyWithoutAssignedToNestedInput
+    incidentEvidence_uploadedBy?: IncidentEvidenceUncheckedUpdateManyWithoutUploadedByNestedInput
+    incidentUpdate_updatedBy?: IncidentUpdateUncheckedUpdateManyWithoutUpdatedByNestedInput
+    lostPropertyCase_assignedTo?: LostPropertyCaseUncheckedUpdateManyWithoutAssignedToNestedInput
+    lostPropertyUpdate_updatedBy?: LostPropertyUpdateUncheckedUpdateManyWithoutUpdatedByNestedInput
+    notification_recipientUser?: NotificationUncheckedUpdateManyWithoutRecipientUserNestedInput
+    auditLog_actorUser?: AuditLogUncheckedUpdateManyWithoutActorUserNestedInput
+    securityEvent_user?: SecurityEventUncheckedUpdateManyWithoutUserNestedInput
+    systemSetting_updatedBy?: SystemSettingUncheckedUpdateManyWithoutUpdatedByNestedInput
+    organization_createdBy?: OrganizationUncheckedUpdateManyWithoutCreatedByNestedInput
+    organization_updatedBy?: OrganizationUncheckedUpdateManyWithoutUpdatedByNestedInput
+    organizationSettings_createdBy?: OrganizationSettingsUncheckedUpdateManyWithoutCreatedByNestedInput
+    organizationSettings_updatedBy?: OrganizationSettingsUncheckedUpdateManyWithoutUpdatedByNestedInput
+    administrativeArea_createdBy?: AdministrativeAreaUncheckedUpdateManyWithoutCreatedByNestedInput
+    administrativeArea_updatedBy?: AdministrativeAreaUncheckedUpdateManyWithoutUpdatedByNestedInput
+    organizationUnit_createdBy?: OrganizationUnitUncheckedUpdateManyWithoutCreatedByNestedInput
+    organizationUnit_updatedBy?: OrganizationUnitUncheckedUpdateManyWithoutUpdatedByNestedInput
+    park_createdBy?: ParkUncheckedUpdateManyWithoutCreatedByNestedInput
+    park_updatedBy?: ParkUncheckedUpdateManyWithoutUpdatedByNestedInput
+    user_createdBy?: UserUncheckedUpdateManyWithoutCreatedByNestedInput
+    user_updatedBy?: UserUncheckedUpdateManyWithoutUpdatedByNestedInput
+    role_createdBy?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
+    role_updatedBy?: RoleUncheckedUpdateManyWithoutUpdatedByNestedInput
+    driver_createdBy?: DriverUncheckedUpdateManyWithoutCreatedByNestedInput
+    driver_updatedBy?: DriverUncheckedUpdateManyWithoutUpdatedByNestedInput
+    driverContact_createdBy?: DriverContactUncheckedUpdateManyWithoutCreatedByNestedInput
+    driverContact_updatedBy?: DriverContactUncheckedUpdateManyWithoutUpdatedByNestedInput
+    conductor_createdBy?: ConductorUncheckedUpdateManyWithoutCreatedByNestedInput
+    conductor_updatedBy?: ConductorUncheckedUpdateManyWithoutUpdatedByNestedInput
+    vehicleOwner_createdBy?: VehicleOwnerUncheckedUpdateManyWithoutCreatedByNestedInput
+    vehicleOwner_updatedBy?: VehicleOwnerUncheckedUpdateManyWithoutUpdatedByNestedInput
+    vehicle_createdBy?: VehicleUncheckedUpdateManyWithoutCreatedByNestedInput
+    vehicle_updatedBy?: VehicleUncheckedUpdateManyWithoutUpdatedByNestedInput
+    route_createdBy?: RouteUncheckedUpdateManyWithoutCreatedByNestedInput
+    route_updatedBy?: RouteUncheckedUpdateManyWithoutUpdatedByNestedInput
+    routeStop_createdBy?: RouteStopUncheckedUpdateManyWithoutCreatedByNestedInput
+    routeStop_updatedBy?: RouteStopUncheckedUpdateManyWithoutUpdatedByNestedInput
+    parkRoute_createdBy?: ParkRouteUncheckedUpdateManyWithoutCreatedByNestedInput
+    parkRoute_updatedBy?: ParkRouteUncheckedUpdateManyWithoutUpdatedByNestedInput
+  }
+
+  export type OrganizationUpsertWithoutStaffSessionsInput = {
+    update: XOR<OrganizationUpdateWithoutStaffSessionsInput, OrganizationUncheckedUpdateWithoutStaffSessionsInput>
+    create: XOR<OrganizationCreateWithoutStaffSessionsInput, OrganizationUncheckedCreateWithoutStaffSessionsInput>
+    where?: OrganizationWhereInput
+  }
+
+  export type OrganizationUpdateToOneWithWhereWithoutStaffSessionsInput = {
+    where?: OrganizationWhereInput
+    data: XOR<OrganizationUpdateWithoutStaffSessionsInput, OrganizationUncheckedUpdateWithoutStaffSessionsInput>
+  }
+
+  export type OrganizationUpdateWithoutStaffSessionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationCode?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationType?: EnumOrganizationTypeFieldUpdateOperationsInput | $Enums.OrganizationType
+    registrationNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    countryCode?: StringFieldUpdateOperationsInput | string
+    status?: EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
+    updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
+    user_organization?: UserUpdateManyWithoutOrganizationNestedInput
+    role_organization?: RoleUpdateManyWithoutOrganizationNestedInput
+    userRole_organization?: UserRoleUpdateManyWithoutOrganizationNestedInput
+    notification_organization?: NotificationUpdateManyWithoutOrganizationNestedInput
+    auditLog_organization?: AuditLogUpdateManyWithoutOrganizationNestedInput
+    securityEvent_organization?: SecurityEventUpdateManyWithoutOrganizationNestedInput
+    organizationSettings_organization?: OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
+    organizationUnit_organization?: OrganizationUnitUpdateManyWithoutOrganizationNestedInput
+    park_organization?: ParkUpdateManyWithoutOrganizationNestedInput
+    driver_organization?: DriverUpdateManyWithoutOrganizationNestedInput
+    driverContact_organization?: DriverContactUpdateManyWithoutOrganizationNestedInput
+    driverDocument_organization?: DriverDocumentUpdateManyWithoutOrganizationNestedInput
+    driverStatusHistory_organization?: DriverStatusHistoryUpdateManyWithoutOrganizationNestedInput
+    driverDisciplinaryAction_organization?: DriverDisciplinaryActionUpdateManyWithoutOrganizationNestedInput
+    conductor_organization?: ConductorUpdateManyWithoutOrganizationNestedInput
+    vehicleOwner_organization?: VehicleOwnerUpdateManyWithoutOrganizationNestedInput
+    vehicle_organization?: VehicleUpdateManyWithoutOrganizationNestedInput
+    vehicleDocument_organization?: VehicleDocumentUpdateManyWithoutOrganizationNestedInput
+    vehicleOwnershipHistory_organization?: VehicleOwnershipHistoryUpdateManyWithoutOrganizationNestedInput
+    driverVehicleAssignment_organization?: DriverVehicleAssignmentUpdateManyWithoutOrganizationNestedInput
+    vehicleCrewAssignment_organization?: VehicleCrewAssignmentUpdateManyWithoutOrganizationNestedInput
+    route_organization?: RouteUpdateManyWithoutOrganizationNestedInput
+    routeStop_organization?: RouteStopUpdateManyWithoutOrganizationNestedInput
+    parkRoute_organization?: ParkRouteUpdateManyWithoutOrganizationNestedInput
+    vehicleRouteAssignment_organization?: VehicleRouteAssignmentUpdateManyWithoutOrganizationNestedInput
+    vehicleQrCode_organization?: VehicleQrCodeUpdateManyWithoutOrganizationNestedInput
+    verificationScan_organization?: VerificationScanUpdateManyWithoutOrganizationNestedInput
+    journey_organization?: JourneyUpdateManyWithoutOrganizationNestedInput
+    journeyEvent_organization?: JourneyEventUpdateManyWithoutOrganizationNestedInput
+    journeyShare_organization?: JourneyShareUpdateManyWithoutOrganizationNestedInput
+    complaint_organization?: ComplaintUpdateManyWithoutOrganizationNestedInput
+    complaintUpdate_organization?: ComplaintUpdateUpdateManyWithoutOrganizationNestedInput
+    incident_organization?: IncidentUpdateManyWithoutOrganizationNestedInput
+    incidentEvidence_organization?: IncidentEvidenceUpdateManyWithoutOrganizationNestedInput
+    incidentUpdate_organization?: IncidentUpdateUpdateManyWithoutOrganizationNestedInput
+    lostPropertyCase_organization?: LostPropertyCaseUpdateManyWithoutOrganizationNestedInput
+    lostPropertyUpdate_organization?: LostPropertyUpdateUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type OrganizationUncheckedUpdateWithoutStaffSessionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationCode?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationType?: EnumOrganizationTypeFieldUpdateOperationsInput | $Enums.OrganizationType
+    registrationNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    countryCode?: StringFieldUpdateOperationsInput | string
+    status?: EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
+    role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+    userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
+    notification_organization?: NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+    auditLog_organization?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+    securityEvent_organization?: SecurityEventUncheckedUpdateManyWithoutOrganizationNestedInput
+    organizationSettings_organization?: OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
+    organizationUnit_organization?: OrganizationUnitUncheckedUpdateManyWithoutOrganizationNestedInput
+    park_organization?: ParkUncheckedUpdateManyWithoutOrganizationNestedInput
+    driver_organization?: DriverUncheckedUpdateManyWithoutOrganizationNestedInput
+    driverContact_organization?: DriverContactUncheckedUpdateManyWithoutOrganizationNestedInput
+    driverDocument_organization?: DriverDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
+    driverStatusHistory_organization?: DriverStatusHistoryUncheckedUpdateManyWithoutOrganizationNestedInput
+    driverDisciplinaryAction_organization?: DriverDisciplinaryActionUncheckedUpdateManyWithoutOrganizationNestedInput
+    conductor_organization?: ConductorUncheckedUpdateManyWithoutOrganizationNestedInput
+    vehicleOwner_organization?: VehicleOwnerUncheckedUpdateManyWithoutOrganizationNestedInput
+    vehicle_organization?: VehicleUncheckedUpdateManyWithoutOrganizationNestedInput
+    vehicleDocument_organization?: VehicleDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
+    vehicleOwnershipHistory_organization?: VehicleOwnershipHistoryUncheckedUpdateManyWithoutOrganizationNestedInput
+    driverVehicleAssignment_organization?: DriverVehicleAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+    vehicleCrewAssignment_organization?: VehicleCrewAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+    route_organization?: RouteUncheckedUpdateManyWithoutOrganizationNestedInput
+    routeStop_organization?: RouteStopUncheckedUpdateManyWithoutOrganizationNestedInput
+    parkRoute_organization?: ParkRouteUncheckedUpdateManyWithoutOrganizationNestedInput
+    vehicleRouteAssignment_organization?: VehicleRouteAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+    vehicleQrCode_organization?: VehicleQrCodeUncheckedUpdateManyWithoutOrganizationNestedInput
+    verificationScan_organization?: VerificationScanUncheckedUpdateManyWithoutOrganizationNestedInput
+    journey_organization?: JourneyUncheckedUpdateManyWithoutOrganizationNestedInput
+    journeyEvent_organization?: JourneyEventUncheckedUpdateManyWithoutOrganizationNestedInput
+    journeyShare_organization?: JourneyShareUncheckedUpdateManyWithoutOrganizationNestedInput
+    complaint_organization?: ComplaintUncheckedUpdateManyWithoutOrganizationNestedInput
+    complaintUpdate_organization?: ComplaintUpdateUncheckedUpdateManyWithoutOrganizationNestedInput
+    incident_organization?: IncidentUncheckedUpdateManyWithoutOrganizationNestedInput
+    incidentEvidence_organization?: IncidentEvidenceUncheckedUpdateManyWithoutOrganizationNestedInput
+    incidentUpdate_organization?: IncidentUpdateUncheckedUpdateManyWithoutOrganizationNestedInput
+    lostPropertyCase_organization?: LostPropertyCaseUncheckedUpdateManyWithoutOrganizationNestedInput
+    lostPropertyUpdate_organization?: LostPropertyUpdateUncheckedUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type StaffSessionCreateManyOrganizationInput = {
+    id?: string
+    userId: string
+    refreshTokenHash: string
+    expiresAt: Date | string
+    revokedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type UserCreateManyOrganizationInput = {
@@ -154439,6 +157142,36 @@ export namespace Prisma {
     authorSessionId?: string | null
   }
 
+  export type StaffSessionUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    refreshTokenHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutStaffSessionsNestedInput
+  }
+
+  export type StaffSessionUncheckedUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    refreshTokenHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StaffSessionUncheckedUpdateManyWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    refreshTokenHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type UserUpdateWithoutOrganizationInput = {
     id?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
@@ -154457,6 +157190,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
     park_managerUser?: ParkUpdateManyWithoutManagerUserNestedInput
@@ -154540,6 +157274,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -158092,6 +160827,15 @@ export namespace Prisma {
     assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type StaffSessionCreateManyUserInput = {
+    id?: string
+    refreshTokenHash: string
+    expiresAt: Date | string
+    revokedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type ParkCreateManyManagerUserInput = {
     id?: string
     organizationId: string
@@ -159123,6 +161867,34 @@ export namespace Prisma {
     parkId: string
     routeId: string
     createdById?: string | null
+  }
+
+  export type StaffSessionUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    refreshTokenHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organization?: OrganizationUpdateOneRequiredWithoutStaffSessionsNestedInput
+  }
+
+  export type StaffSessionUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    refreshTokenHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StaffSessionUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    refreshTokenHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ParkUpdateWithoutManagerUserInput = {
@@ -160658,6 +163430,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     updatedBy?: UserUpdateOneWithoutOrganization_updatedByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUpdateManyWithoutOrganizationNestedInput
@@ -160715,6 +163488,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -160789,6 +163563,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutOrganizationNestedInput
     createdBy?: UserUpdateOneWithoutOrganization_createdByNestedInput
     user_organization?: UserUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUpdateManyWithoutOrganizationNestedInput
@@ -160846,6 +163621,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     user_organization?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     role_organization?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
     userRole_organization?: UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -161408,6 +164184,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     updatedBy?: UserUpdateOneWithoutUser_updatedByNestedInput
     park_managerUser?: ParkUpdateManyWithoutManagerUserNestedInput
@@ -161491,6 +164268,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
@@ -161592,6 +164370,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staffSessions?: StaffSessionUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneWithoutUser_organizationNestedInput
     createdBy?: UserUpdateOneWithoutUser_createdByNestedInput
     park_managerUser?: ParkUpdateManyWithoutManagerUserNestedInput
@@ -161675,6 +164454,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    staffSessions?: StaffSessionUncheckedUpdateManyWithoutUserNestedInput
     park_managerUser?: ParkUncheckedUpdateManyWithoutManagerUserNestedInput
     userRole_user?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     userRole_grantedBy?: UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput

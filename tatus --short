@@ -1,0 +1,21 @@
+warning: in the working copy of 'packages/database/PHASE2.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'packages/database/generated/routemate-client/edge.js', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'packages/database/generated/routemate-client/index-browser.js', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'packages/database/generated/routemate-client/index.d.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'packages/database/generated/routemate-client/index.js', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'packages/database/generated/routemate-client/package.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'packages/database/generated/routemate-client/schema.prisma', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'packages/database/prisma/schema.prisma', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'packages/database/runtime-context.cjs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'packages/database/scripts/verify-phase2.cjs', LF will be replaced by CRLF the next time Git touches it
+ packages/database/PHASE2.md                        |    2 [32m+[m
+ .../database/generated/routemate-client/edge.js    |   22 [32m+[m[31m-[m
+ .../generated/routemate-client/index-browser.js    |   14 [32m+[m[31m-[m
+ .../database/generated/routemate-client/index.d.ts | 3170 [32m++++++++++++++++++[m[31m--[m
+ .../database/generated/routemate-client/index.js   |   22 [32m+[m[31m-[m
+ .../generated/routemate-client/package.json        |    2 [32m+[m[31m-[m
+ .../generated/routemate-client/schema.prisma       |   60 [32m+[m[31m-[m
+ packages/database/prisma/schema.prisma             |   19 [32m+[m
+ packages/database/runtime-context.cjs              |  104 [32m+[m[31m-[m
+ packages/database/scripts/verify-phase2.cjs        |   21 [32m+[m[31m-[m
+ 10 files changed, 3169 insertions(+), 267 deletions(-)
