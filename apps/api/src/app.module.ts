@@ -13,6 +13,7 @@ import { UsersModule } from "./users/users.module";
 import { RolesModule } from "./roles/roles.module";
 import { OrganizationsModule } from "./organizations/organizations.module";
 import { OrganizationUnitsModule } from "./organization-units/organization-units.module";
+import { OperationsModule } from "./operations/operations.module";
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, validate: validateEnvironment }),
@@ -25,6 +26,7 @@ import { OrganizationUnitsModule } from "./organization-units/organization-units
     RolesModule,
     OrganizationsModule,
     OrganizationUnitsModule,
+    OperationsModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },

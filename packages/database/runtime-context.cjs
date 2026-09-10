@@ -31,6 +31,8 @@ async function assertRuntimeRole(tx) {
       pg_has_role(current_user, 'routemate_app', 'USAGE') AS runtime,
       pg_has_role(current_user, 'routemate_platform_admin', 'MEMBER') AS platform,
       pg_has_role(current_user, 'routemate_auth_owner', 'MEMBER') AS auth_owner,
+      EXISTS (SELECT 1 FROM pg_roles verification WHERE verification.rolname='routemate_verification_owner'
+        AND pg_has_role(current_user,verification.oid,'MEMBER')) AS verification_owner,
       EXISTS (SELECT 1 FROM pg_roles elevated WHERE
         (elevated.rolsuper OR elevated.rolbypassrls OR elevated.rolcreaterole OR elevated.rolcreatedb OR elevated.rolreplication)
         AND pg_has_role(current_user,elevated.oid,'MEMBER')) AS elevated_membership,
@@ -43,6 +45,7 @@ async function assertRuntimeRole(tx) {
     !role.runtime ||
     role.platform ||
     role.auth_owner ||
+    role.verification_owner ||
     role.rolsuper ||
     role.rolbypassrls ||
     role.rolcreaterole ||

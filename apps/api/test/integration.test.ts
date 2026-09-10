@@ -14,12 +14,14 @@ import { hashPassword } from "../src/auth/password";
 import { PrismaClient } from "../../../packages/database/generated/routemate-client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { withRuntimeContext } from "../../../packages/database/runtime-context.cjs";
+import { checkOperations } from "./phase4.checks";
 
 const databaseRoot = path.resolve(__dirname, "../../../packages/database");
 const migrationNames = [
   "0_init",
   "20260910150000_phase2_spatial_rls",
   "20260910170000_phase3_auth_sessions",
+  "20260911100000_phase4_operations",
 ];
 const { seed } = require(path.join(databaseRoot, "scripts/seed-phase3.cjs"));
 test(
@@ -444,6 +446,19 @@ test(
           } finally {
             await prisma.$disconnect();
           }
+        },
+      );
+      await t.test(
+        "operational milestone, park RBAC, spatial routes and private QR verification",
+        async () => {
+          await checkOperations(
+            http,
+            fixture!,
+            a,
+            accessA,
+            accessB,
+            scopedAccess,
+          );
         },
       );
       await t.test(

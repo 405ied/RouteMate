@@ -17,6 +17,17 @@ const permissions = [
   "incident.assign",
   "incident.update",
   "platform.organization.manage",
+  "park.view",
+  "park.create",
+  "route.view",
+  "route.create",
+  "driver.approve",
+  "vehicle.approve",
+  "vehicle.suspend",
+  "assignment.view",
+  "assignment.manage",
+  "qr.issue",
+  "qr.revoke",
 ];
 const baselineRoles = {
   ORGANIZATION_ADMIN: {
@@ -72,15 +83,20 @@ const baselineRoles = {
   },
 };
 async function seed(client, { organizationCode, email, password }) {
-  if (
-    !/^[A-Za-z0-9_-]{1,30}$/.test(organizationCode) ||
-    !email ||
-    password.length < 12 ||
-    Buffer.byteLength(password) > 256
-  )
+  if (typeof organizationCode !== "string" || !organizationCode)
+    throw new Error("BOOTSTRAP_ORGANIZATION_CODE is missing");
+  if (!/^[A-Za-z0-9_-]{1,30}$/.test(organizationCode))
     throw new Error(
-      "Valid bootstrap code/email and a 12–256 byte password required",
+      "BOOTSTRAP_ORGANIZATION_CODE must be 1-30 letters, digits, underscores or hyphens",
     );
+  if (typeof email !== "string" || !email.trim())
+    throw new Error("BOOTSTRAP_ADMIN_EMAIL is missing");
+  if (typeof password !== "string" || !password)
+    throw new Error("BOOTSTRAP_ADMIN_PASSWORD is missing");
+  if (password.length < 12)
+    throw new Error("BOOTSTRAP_ADMIN_PASSWORD must be at least 12 characters");
+  if (Buffer.byteLength(password) > 256)
+    throw new Error("BOOTSTRAP_ADMIN_PASSWORD exceeds the 256-byte limit");
   const salt = randomBytes(16);
   const hash = await promisify(scrypt)(password, salt, 64, {
     N: 32768,
@@ -228,10 +244,36 @@ if (require.main === module) {
     } finally {
       await client.end();
     }
-  })().catch(() => {
-    console.error(
-      "Seed failed; verify bootstrap environment and database privileges. No credentials logged.",
-    );
+  })().catch((error) => {
+    // Only print messages authored here. Driver messages/details can contain secrets.
+    const safeMessages = new Set([
+      "Bootstrap requires NODE_ENV=development",
+      "ROUTEMATE_BOOTSTRAP_DATABASE_URL required",
+      "Development bootstrap is restricted to local routemate_db",
+      "BOOTSTRAP_ORGANIZATION_CODE is missing",
+      "BOOTSTRAP_ORGANIZATION_CODE must be 1-30 letters, digits, underscores or hyphens",
+      "BOOTSTRAP_ADMIN_EMAIL is missing",
+      "BOOTSTRAP_ADMIN_PASSWORD is missing",
+      "BOOTSTRAP_ADMIN_PASSWORD must be at least 12 characters",
+      "BOOTSTRAP_ADMIN_PASSWORD exceeds the 256-byte limit",
+    ]);
+    const safeCodes = {
+      ERR_INVALID_URL: "Bootstrap database URL is malformed",
+      ECONNREFUSED: "PostgreSQL connection refused",
+      "28P01": "PostgreSQL password authentication failed",
+      "42501": "Insufficient PostgreSQL privileges",
+      "42P01": "Required database relation is missing; check migrations",
+      "23505": "Seed conflicts with an existing unique value",
+      "23502": "A required database value is missing",
+      "23503": "A referenced database record is missing",
+      "42703": "Required database column is missing; check migrations",
+    };
+    const reason = safeMessages.has(error?.message)
+      ? error.message
+      : Object.hasOwn(safeCodes, error?.code)
+        ? safeCodes[error.code]
+        : "Unclassified failure; inspect with credential-safe diagnostics";
+    console.error(`Seed failed: ${reason}. No credentials logged.`);
     process.exitCode = 1;
   });
 }

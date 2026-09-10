@@ -58,6 +58,43 @@ export class RbacService {
       return;
     throw new ForbiddenException("Permission or resource scope denied");
   }
+  async allowedParkIds(
+    tx: Transaction,
+    identity: Identity,
+    permission: string,
+  ): Promise<string[] | null> {
+    const grants = await this.grants(tx, identity, permission);
+    if (grants.some((g) => g.scope === "ORGANIZATION")) return null;
+    const units = await this.allowedUnitIds(tx, identity, permission);
+    const parks = await tx.park.findMany({
+      where: {
+        organizationId: identity.organizationId,
+        deletedAt: null,
+        OR: [
+          {
+            id: {
+              in: grants
+                .filter((g) => g.scope === "PARK")
+                .map((g) => g.park_id!),
+            },
+          },
+          { organizationUnitId: { in: units ?? [] } },
+        ],
+      },
+      select: { id: true },
+    });
+    return parks.map((p) => p.id);
+  }
+  async requirePark(
+    tx: Transaction,
+    identity: Identity,
+    permission: string,
+    parkId: string,
+  ) {
+    const parks = await this.allowedParkIds(tx, identity, permission);
+    if (parks !== null && !parks.includes(parkId))
+      throw new ForbiddenException("Permission or park scope denied");
+  }
   check(identity: Identity, permission: string, unitId?: string) {
     return this.db.run(identity, (tx) =>
       this.require(tx, identity, permission, unitId),
