@@ -1,0 +1,86 @@
+[
+  {
+    "table": "administrative_areas",
+    "field": "geometry",
+    "column": "geometry",
+    "kind": "MultiPolygon",
+    "type": "geometry(MultiPolygon,4326)"
+  },
+  {
+    "table": "organization_units",
+    "field": "location",
+    "column": "location",
+    "kind": "Point",
+    "type": "geography(Point,4326)"
+  },
+  {
+    "table": "parks",
+    "field": "location",
+    "column": "location",
+    "kind": "Point",
+    "type": "geography(Point,4326)"
+  },
+  {
+    "table": "routes",
+    "field": "originLocation",
+    "column": "origin_location",
+    "kind": "Point",
+    "type": "geography(Point,4326)"
+  },
+  {
+    "table": "routes",
+    "field": "destinationLocation",
+    "column": "destination_location",
+    "kind": "Point",
+    "type": "geography(Point,4326)"
+  },
+  {
+    "table": "routes",
+    "field": "routeGeometry",
+    "column": "route_geometry",
+    "kind": "LineString",
+    "type": "geometry(LineString,4326)"
+  },
+  {
+    "table": "route_stops",
+    "field": "location",
+    "column": "location",
+    "kind": "Point",
+    "type": "geography(Point,4326)"
+  },
+  {
+    "table": "verification_scans",
+    "field": "location",
+    "column": "location",
+    "kind": "Point",
+    "type": "geography(Point,4326)"
+  },
+  {
+    "table": "journeys",
+    "field": "boardingLocation",
+    "column": "boarding_location",
+    "kind": "Point",
+    "type": "geography(Point,4326)"
+  },
+  {
+    "table": "journeys",
+    "field": "endingLocation",
+    "column": "ending_location",
+    "kind": "Point",
+    "type": "geography(Point,4326)"
+  },
+  {
+    "table": "journey_events",
+    "field": "location",
+    "column": "location",
+    "kind": "Point",
+    "type": "geography(Point,4326)"
+  },
+  {
+    "table": "incidents",
+    "field": "location",
+    "column": "location",
+    "kind": "Point",
+    "type": "geography(Point,4326)"
+  }
+]

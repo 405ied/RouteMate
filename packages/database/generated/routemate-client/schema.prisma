@@ -1,0 +1,2042 @@
+// RouteMate Transport Hub — PostgreSQL 18 / Prisma 7.10.0.
+// Phase 2 native spatial types, GiST indexes, active uniqueness and RLS are
+// maintained in 20260910150000_phase2_spatial_rls/migration.sql.
+// See ../PHASE2.md for runtime roles, transaction context and migration workflow.
+// Remaining production hardening items below are a backlog, not all implemented.
+// 2. SQL migration enables and forces RLS. Derive tenant/user context from
+//    authenticated server state, set transaction-local context, use USING and
+//    WITH CHECK, and deny absent context. App roles must not own tables/BYPASSRLS.
+//    Global passengers/sessions/contacts have owner policies; nullable-org
+//    users, roles, notifications, audits/security have explicit platform rules.
+//    Public QR/share endpoints must use constrained server queries/views, never
+//    expose driver contacts, documents, national IDs or broad tenant access.
+// 3. Active primary-driver and QR uniqueness are implemented. Remaining indexes:
+//    current owner, crew/route assignments, primary trusted contact, open grants,
+//    global role codes and global user email/phone (WHERE organization_id IS NULL).
+//    Null scope columns need separate predicates / NULLS NOT DISTINCT on PG15+.
+//    Time-dependent now() is not an immutable index predicate: check expiries at
+//    runtime; use revoked/end/status fields and transactional lifecycle updates.
+//    Full unique identifiers deliberately remain reserved after soft deletion.
+// 4. CHECK constraints: nonnegative sizes/amounts/accuracy/distance/durations,
+//    positive capacities, valid stop order/year, start < end, issue <= expiry,
+//    expiry > issue/create, completion/return timestamps and status consistency;
+//    dimension-specific driver history, recipient/reporter/author shapes, media
+//    evidence shape, scope shape, login identifier availability. Pair anonymous
+//    session and passenger identities only when their owner matches. Enforce
+//    required reporter identity for complaint/lost-property, and Incident by type.
+// 5. Composite (organizationId, foreignId) FKs already enforce tenant equality
+//    between operational models. Remaining UUID-only user/role/global references
+//    require authorization AND SQL triggers for tenant/platform exceptions.
+//    Add acyclic parent hierarchy/type validation and org-unit/park scope checks.
+//    Add same-vehicle/driver/route consistency triggers for scans/journeys and
+//    denormalized case links; validate reporters own the referenced journey,
+//    session and trusted contacts. Tenant equality alone is not authorization.
+// 6. Range exclusion constraints prevent overlapping primary-driver/ownership
+//    history; define half-open [start,end) intervals. Lock target rows for rotation,
+//    reassignment, status/history and owner-cache updates. Freeze identity/start
+//    fields of historical assignments once referenced; end/status may transition.
+// 7. Append-only permissions/triggers for logs, scans, status/case histories,
+//    journey events and evidence; no cascading deletes. Add database updated_at
+//    triggers for non-Prisma writes (@updatedAt is Prisma-managed only). Retention
+//    and controlled anonymization jobs are separate from ordinary application roles.
+// 8. PostgreSQL full-text tsvector/GIN search, case-insensitive normalized identity
+//    uniqueness, tenant-safe human code allocation, and operational retention/
+//    partitioning are SQL/application work. No MAX(code)+1 code allocation.
+// 9. Lifecycle transitions, feature flags, encryption, token/password hashing,
+//    least-privilege public projections and notification delivery need application
+//    implementation. This schema is a foundation, not a deployed security boundary.
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/routemate-client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum OrganizationType {
+  TRANSPORT_UNION
+  TRANSPORT_ASSOCIATION
+  COOPERATIVE
+  PRIVATE_FLEET
+  GOVERNMENT_OPERATOR
+  OTHER
+}
+
+enum OrganizationStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  INACTIVE
+}
+
+enum RecordStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum AdministrativeAreaType {
+  COUNTRY
+  STATE
+  LGA
+  CITY
+  DISTRICT
+}
+
+enum OrganizationUnitType {
+  NATIONAL
+  STATE_CHAPTER
+  ZONE
+  BRANCH
+  LOCAL_UNIT
+}
+
+enum ParkType {
+  TERMINAL
+  MOTOR_PARK
+  BUS_STOP
+  LOADING_POINT
+  DEPOT
+}
+
+enum UserStatus {
+  INVITED
+  ACTIVE
+  SUSPENDED
+  DISABLED
+}
+
+enum RoleScope {
+  PLATFORM
+  ORGANIZATION
+  UNIT
+  PARK
+}
+
+enum Gender {
+  FEMALE
+  MALE
+  OTHER
+  NOT_DISCLOSED
+}
+
+enum RegistrationStatus {
+  PENDING
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  BLACKLISTED
+  DECEASED
+}
+
+enum VehicleRegistrationStatus {
+  PENDING
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  BLACKLISTED
+  RETIRED
+}
+
+enum ComplianceStatus {
+  UNKNOWN
+  VALID
+  EXPIRING
+  EXPIRED
+  REVIEW_REQUIRED
+}
+
+enum DisciplinaryStatus {
+  CLEAR
+  WARNING
+  UNDER_INVESTIGATION
+  SUSPENDED
+  BANNED
+}
+
+enum ContactType {
+  NEXT_OF_KIN
+  EMERGENCY_CONTACT
+  GUARANTOR
+  OTHER
+}
+
+enum DriverDocumentType {
+  DRIVER_LICENSE
+  UNION_ID
+  IDENTITY_DOCUMENT
+  MEDICAL_CERTIFICATE
+  TRAINING_CERTIFICATE
+  OTHER
+}
+
+enum VehicleDocumentType {
+  VEHICLE_REGISTRATION
+  INSURANCE
+  ROADWORTHINESS
+  INSPECTION
+  PERMIT
+  OWNERSHIP
+  OTHER
+}
+
+enum DocumentVerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum DriverStatusDimension {
+  REGISTRATION
+  COMPLIANCE
+  DISCIPLINARY
+}
+
+enum DisciplinaryActionType {
+  WARNING
+  FINE
+  SUSPENSION
+  ROUTE_SUSPENSION
+  PARK_SUSPENSION
+  BAN
+  REINSTATEMENT
+}
+
+enum DisciplinaryActionStatus {
+  PENDING
+  ACTIVE
+  COMPLETED
+  REVOKED
+  APPEALED
+}
+
+enum OwnerType {
+  INDIVIDUAL
+  DRIVER
+  COOPERATIVE
+  COMPANY
+  TRANSPORT_ORGANIZATION
+  GOVERNMENT
+}
+
+enum VehicleType {
+  DANFO
+  KOROPE
+  MINIBUS
+  BUS
+  TAXI
+  TRICYCLE
+  SHUTTLE
+  OTHER
+}
+
+enum AssignmentType {
+  PRIMARY
+  TEMPORARY
+  RELIEF
+}
+
+enum AssignmentStatus {
+  ACTIVE
+  ENDED
+  SUSPENDED
+}
+
+enum OwnershipStatus {
+  ACTIVE
+  ENDED
+  DISPUTED
+}
+
+enum CrewRole {
+  CONDUCTOR
+  ASSISTANT
+  OTHER
+}
+
+enum ParkRouteRole {
+  ORIGIN
+  DESTINATION
+  INTERMEDIATE
+  OPERATING
+}
+
+enum QrStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+  REPLACED
+}
+
+enum VerificationResult {
+  VALID
+  VEHICLE_SUSPENDED
+  DRIVER_SUSPENDED
+  QR_REVOKED
+  QR_EXPIRED
+  DOCUMENT_EXPIRED
+  UNKNOWN
+}
+
+enum PassengerStatus {
+  ACTIVE
+  SUSPENDED
+  DISABLED
+}
+
+enum JourneyStatus {
+  BOARDED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  EMERGENCY
+}
+
+enum JourneyEventType {
+  QR_SCANNED
+  BOARDING_CONFIRMED
+  TRIP_STARTED
+  TRIP_SHARED
+  LOCATION_UPDATED
+  SAFETY_REPORT
+  EMERGENCY_TRIGGERED
+  TRIP_ENDED
+  TRIP_CANCELLED
+}
+
+enum ComplaintCategory {
+  FARE_DISPUTE
+  DRIVER_BEHAVIOUR
+  CONDUCTOR_BEHAVIOUR
+  VEHICLE_CONDITION
+  OVERLOADING
+  LOST_PROPERTY
+  SERVICE_QUALITY
+  OTHER
+}
+
+enum Severity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum ComplaintStatus {
+  REPORTED
+  TRIAGED
+  ASSIGNED
+  INVESTIGATING
+  RESOLVED
+  REJECTED
+  CLOSED
+}
+
+enum ReporterType {
+  PASSENGER
+  ANONYMOUS
+  USER
+  SYSTEM
+}
+
+enum IncidentCategory {
+  SAFETY
+  SUSPICIOUS_ACTIVITY
+  ONE_CHANCE_SUSPICION
+  THEFT
+  ASSAULT
+  HARASSMENT
+  ACCIDENT
+  DANGEROUS_DRIVING
+  ABDUCTION_SUSPICION
+  VEHICLE_FAILURE
+  OTHER
+}
+
+enum IncidentStatus {
+  REPORTED
+  TRIAGED
+  ASSIGNED
+  INVESTIGATING
+  ACTION_TAKEN
+  RESOLVED
+  CLOSED
+  DISMISSED
+}
+
+enum EvidenceType {
+  PHOTO
+  VIDEO
+  AUDIO
+  DOCUMENT
+  TEXT
+}
+
+enum LostPropertyCategory {
+  PHONE
+  ELECTRONICS
+  WALLET
+  MONEY
+  DOCUMENTS
+  BAG
+  CLOTHING
+  OTHER
+}
+
+enum LostPropertyStatus {
+  REPORTED
+  INVESTIGATING
+  FOUND
+  RETURNED
+  NOT_FOUND
+  CLOSED
+}
+
+enum NotificationRecipientType {
+  USER
+  PASSENGER
+}
+
+enum NotificationChannel {
+  IN_APP
+  EMAIL
+  SMS
+  WHATSAPP
+  PUSH
+}
+
+enum NotificationType {
+  GENERAL
+  SECURITY
+  DOCUMENT_EXPIRY
+  REGISTRATION
+  ASSIGNMENT
+  JOURNEY_SHARE
+  COMPLAINT_UPDATE
+  INCIDENT_ALERT
+  INCIDENT_UPDATE
+  LOST_PROPERTY_UPDATE
+}
+
+enum NotificationStatus {
+  PENDING
+  PROCESSING
+  SENT
+  DELIVERED
+  FAILED
+  CANCELLED
+}
+
+enum SecurityEventType {
+  LOGIN_SUCCESS
+  LOGIN_FAILED
+  LOGOUT
+  PASSWORD_CHANGED
+  PASSWORD_RESET_REQUESTED
+  MFA_ENABLED
+  MFA_DISABLED
+  ACCOUNT_LOCKED
+  SUSPICIOUS_LOGIN
+  ACCESS_DENIED
+  TOKEN_REVOKED
+  QR_VERIFICATION_FAILED
+}
+
+enum SettingValueType {
+  STRING
+  NUMBER
+  BOOLEAN
+  JSON
+}
+
+model Organization {
+  id                 String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationCode   String             @unique @map("organization_code") @db.VarChar(30)
+  name               String             @db.VarChar(255)
+  shortName          String?            @map("short_name") @db.VarChar(100)
+  organizationType   OrganizationType   @map("organization_type")
+  registrationNumber String?            @map("registration_number") @db.VarChar(100)
+  email              String?            @db.VarChar(254)
+  phone              String?            @db.VarChar(32)
+  address            String?            @db.Text
+  countryCode        String             @default("NGA") @map("country_code") @db.Char(3)
+  status             OrganizationStatus @default(PENDING)
+  logoUrl            String?            @map("logo_url") @db.Text
+  createdAt          DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt          DateTime?          @map("deleted_at") @db.Timestamptz(6)
+  createdById        String?            @map("created_by_id") @db.Uuid
+  updatedById        String?            @map("updated_by_id") @db.Uuid
+
+  createdBy                             User?                      @relation("Organization_createdBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  updatedBy                             User?                      @relation("Organization_updatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  user_organization                     User[]                     @relation("User_organization")
+  role_organization                     Role[]                     @relation("Role_organization")
+  userRole_organization                 UserRole[]                 @relation("UserRole_organization")
+  notification_organization             Notification[]             @relation("Notification_organization")
+  auditLog_organization                 AuditLog[]                 @relation("AuditLog_organization")
+  securityEvent_organization            SecurityEvent[]            @relation("SecurityEvent_organization")
+  organizationSettings_organization     OrganizationSettings?      @relation("OrganizationSettings_organization")
+  organizationUnit_organization         OrganizationUnit[]         @relation("OrganizationUnit_organization")
+  park_organization                     Park[]                     @relation("Park_organization")
+  driver_organization                   Driver[]                   @relation("Driver_organization")
+  driverContact_organization            DriverContact[]            @relation("DriverContact_organization")
+  driverDocument_organization           DriverDocument[]           @relation("DriverDocument_organization")
+  driverStatusHistory_organization      DriverStatusHistory[]      @relation("DriverStatusHistory_organization")
+  driverDisciplinaryAction_organization DriverDisciplinaryAction[] @relation("DriverDisciplinaryAction_organization")
+  conductor_organization                Conductor[]                @relation("Conductor_organization")
+  vehicleOwner_organization             VehicleOwner[]             @relation("VehicleOwner_organization")
+  vehicle_organization                  Vehicle[]                  @relation("Vehicle_organization")
+  vehicleDocument_organization          VehicleDocument[]          @relation("VehicleDocument_organization")
+  vehicleOwnershipHistory_organization  VehicleOwnershipHistory[]  @relation("VehicleOwnershipHistory_organization")
+  driverVehicleAssignment_organization  DriverVehicleAssignment[]  @relation("DriverVehicleAssignment_organization")
+  vehicleCrewAssignment_organization    VehicleCrewAssignment[]    @relation("VehicleCrewAssignment_organization")
+  route_organization                    Route[]                    @relation("Route_organization")
+  routeStop_organization                RouteStop[]                @relation("RouteStop_organization")
+  parkRoute_organization                ParkRoute[]                @relation("ParkRoute_organization")
+  vehicleRouteAssignment_organization   VehicleRouteAssignment[]   @relation("VehicleRouteAssignment_organization")
+  vehicleQrCode_organization            VehicleQrCode[]            @relation("VehicleQrCode_organization")
+  verificationScan_organization         VerificationScan[]         @relation("VerificationScan_organization")
+  journey_organization                  Journey[]                  @relation("Journey_organization")
+  journeyEvent_organization             JourneyEvent[]             @relation("JourneyEvent_organization")
+  journeyShare_organization             JourneyShare[]             @relation("JourneyShare_organization")
+  complaint_organization                Complaint[]                @relation("Complaint_organization")
+  complaintUpdate_organization          ComplaintUpdate[]          @relation("ComplaintUpdate_organization")
+  incident_organization                 Incident[]                 @relation("Incident_organization")
+  incidentEvidence_organization         IncidentEvidence[]         @relation("IncidentEvidence_organization")
+  incidentUpdate_organization           IncidentUpdate[]           @relation("IncidentUpdate_organization")
+  lostPropertyCase_organization         LostPropertyCase[]         @relation("LostPropertyCase_organization")
+  lostPropertyUpdate_organization       LostPropertyUpdate[]       @relation("LostPropertyUpdate_organization")
+
+  @@index([createdById])
+  @@index([updatedById])
+  @@map("organizations")
+}
+
+model OrganizationSettings {
+  id                                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId                     String   @map("organization_id") @db.Uuid
+  allowPublicDriverPhoto             Boolean  @default(false) @map("allow_public_driver_photo")
+  allowConductorRegistration         Boolean  @default(false) @map("allow_conductor_registration")
+  requireDriverDocumentVerification  Boolean  @default(true) @map("require_driver_document_verification")
+  requireVehicleDocumentVerification Boolean  @default(true) @map("require_vehicle_document_verification")
+  allowAnonymousBoarding             Boolean  @default(true) @map("allow_anonymous_boarding")
+  enableTripSharing                  Boolean  @default(true) @map("enable_trip_sharing")
+  enableIncidentReporting            Boolean  @default(true) @map("enable_incident_reporting")
+  enableLostProperty                 Boolean  @default(true) @map("enable_lost_property")
+  enableLiveTracking                 Boolean  @default(false) @map("enable_live_tracking")
+  defaultCountry                     String   @default("NGA") @map("default_country") @db.Char(3)
+  defaultTimezone                    String   @default("Africa/Lagos") @map("default_timezone") @db.VarChar(64)
+  metadata                           Json?    @db.JsonB
+  createdAt                          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                          DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  createdById                        String?  @map("created_by_id") @db.Uuid
+  updatedById                        String?  @map("updated_by_id") @db.Uuid
+
+  organization Organization @relation("OrganizationSettings_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  createdBy    User?        @relation("OrganizationSettings_createdBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  updatedBy    User?        @relation("OrganizationSettings_updatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([organizationId, id])
+  @@unique([organizationId])
+  @@index([organizationId, createdAt])
+  @@index([createdById])
+  @@index([updatedById])
+  @@map("organization_settings")
+}
+
+model AdministrativeArea {
+  id          String                                      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code        String                                      @unique @db.VarChar(64)
+  name        String                                      @db.VarChar(255)
+  areaType    AdministrativeAreaType                      @map("area_type")
+  countryCode String                                      @map("country_code") @db.Char(3)
+  /// Phase 2: GeoJSON MultiPolygon -> geometry(MultiPolygon,4326), GiST index.
+  geometry    Unsupported("geometry(MultiPolygon,4326)")?
+  createdAt   DateTime                                    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime                                    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt   DateTime?                                   @map("deleted_at") @db.Timestamptz(6)
+  parentId    String?                                     @map("parent_id") @db.Uuid
+  createdById String?                                     @map("created_by_id") @db.Uuid
+  updatedById String?                                     @map("updated_by_id") @db.Uuid
+
+  parent                              AdministrativeArea?  @relation("AdministrativeArea_parent", fields: [parentId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  createdBy                           User?                @relation("AdministrativeArea_createdBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  updatedBy                           User?                @relation("AdministrativeArea_updatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  administrativeArea_parent           AdministrativeArea[] @relation("AdministrativeArea_parent")
+  organizationUnit_administrativeArea OrganizationUnit[]   @relation("OrganizationUnit_administrativeArea")
+  park_administrativeArea             Park[]               @relation("Park_administrativeArea")
+
+  @@index([parentId])
+  @@index([countryCode, areaType, name])
+  @@index([createdById])
+  @@index([updatedById])
+  @@map("administrative_areas")
+}
+
+model OrganizationUnit {
+  id                   String                                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId       String                                @map("organization_id") @db.Uuid
+  code                 String                                @db.VarChar(40)
+  name                 String                                @db.VarChar(255)
+  unitType             OrganizationUnitType                  @map("unit_type")
+  address              String?                               @db.Text
+  /// Phase 2: GeoJSON Point -> geography(Point,4326), GiST index.
+  location             Unsupported("geography(Point,4326)")?
+  phone                String?                               @db.VarChar(32)
+  email                String?                               @db.VarChar(254)
+  status               RecordStatus                          @default(ACTIVE)
+  createdAt            DateTime                              @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime                              @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt            DateTime?                             @map("deleted_at") @db.Timestamptz(6)
+  parentUnitId         String?                               @map("parent_unit_id") @db.Uuid
+  administrativeAreaId String?                               @map("administrative_area_id") @db.Uuid
+  createdById          String?                               @map("created_by_id") @db.Uuid
+  updatedById          String?                               @map("updated_by_id") @db.Uuid
+
+  parentUnit                  OrganizationUnit?   @relation("OrganizationUnit_parentUnit", fields: [organizationId, parentUnitId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  administrativeArea          AdministrativeArea? @relation("OrganizationUnit_administrativeArea", fields: [administrativeAreaId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  organization                Organization        @relation("OrganizationUnit_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  createdBy                   User?               @relation("OrganizationUnit_createdBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  updatedBy                   User?               @relation("OrganizationUnit_updatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  organizationUnit_parentUnit OrganizationUnit[]  @relation("OrganizationUnit_parentUnit")
+  park_organizationUnit       Park[]              @relation("Park_organizationUnit")
+  userRole_organizationUnit   UserRole[]          @relation("UserRole_organizationUnit")
+  driver_organizationUnit     Driver[]            @relation("Driver_organizationUnit")
+
+  @@unique([organizationId, id])
+  @@unique([organizationId, code])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, parentUnitId])
+  @@index([administrativeAreaId])
+  @@index([createdById])
+  @@index([updatedById])
+  @@map("organization_units")
+}
+
+model Park {
+  id                   String                                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId       String                                @map("organization_id") @db.Uuid
+  parkCode             String                                @unique @map("park_code") @db.VarChar(30)
+  name                 String                                @db.VarChar(255)
+  address              String?                               @db.Text
+  /// Phase 2: GeoJSON Point -> geography(Point,4326), GiST index.
+  location             Unsupported("geography(Point,4326)")?
+  parkType             ParkType                              @default(MOTOR_PARK) @map("park_type")
+  status               RecordStatus                          @default(ACTIVE)
+  capacity             Int?
+  createdAt            DateTime                              @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime                              @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt            DateTime?                             @map("deleted_at") @db.Timestamptz(6)
+  organizationUnitId   String                                @map("organization_unit_id") @db.Uuid
+  administrativeAreaId String?                               @map("administrative_area_id") @db.Uuid
+  managerUserId        String?                               @map("manager_user_id") @db.Uuid
+  createdById          String?                               @map("created_by_id") @db.Uuid
+  updatedById          String?                               @map("updated_by_id") @db.Uuid
+
+  organizationUnit              OrganizationUnit           @relation("Park_organizationUnit", fields: [organizationId, organizationUnitId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  administrativeArea            AdministrativeArea?        @relation("Park_administrativeArea", fields: [administrativeAreaId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  managerUser                   User?                      @relation("Park_managerUser", fields: [managerUserId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  organization                  Organization               @relation("Park_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  createdBy                     User?                      @relation("Park_createdBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  updatedBy                     User?                      @relation("Park_updatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  userRole_park                 UserRole[]                 @relation("UserRole_park")
+  driver_primaryPark            Driver[]                   @relation("Driver_primaryPark")
+  driverDisciplinaryAction_park DriverDisciplinaryAction[] @relation("DriverDisciplinaryAction_park")
+  conductor_primaryPark         Conductor[]                @relation("Conductor_primaryPark")
+  vehicle_primaryPark           Vehicle[]                  @relation("Vehicle_primaryPark")
+  parkRoute_park                ParkRoute[]                @relation("ParkRoute_park")
+  vehicleRouteAssignment_park   VehicleRouteAssignment[]   @relation("VehicleRouteAssignment_park")
+  journey_boardingPark          Journey[]                  @relation("Journey_boardingPark")
+  complaint_park                Complaint[]                @relation("Complaint_park")
+  incident_park                 Incident[]                 @relation("Incident_park")
+  lostPropertyCase_park         LostPropertyCase[]         @relation("LostPropertyCase_park")
+
+  @@unique([organizationId, id])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, organizationUnitId])
+  @@index([administrativeAreaId])
+  @@index([managerUserId])
+  @@index([createdById])
+  @@index([updatedById])
+  @@map("parks")
+}
+
+/// A null organizationId is reserved for platform operators. Tenant staff belong to one organization. Phase 2 must enforce actor/grant tenant scope, including platform exceptions; these nullable global references use UUID foreign keys.
+model User {
+  id                  String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId      String?    @map("organization_id") @db.Uuid
+  firstName           String     @map("first_name") @db.VarChar(100)
+  lastName            String     @map("last_name") @db.VarChar(100)
+  email               String?    @db.VarChar(254)
+  phone               String?    @db.VarChar(32)
+  passwordHash        String?    @map("password_hash") @db.Text
+  externalAuthSubject String?    @unique @map("external_auth_subject") @db.VarChar(255)
+  status              UserStatus @default(INVITED)
+  lastLoginAt         DateTime?  @map("last_login_at") @db.Timestamptz(6)
+  failedLoginAttempts Int        @default(0) @map("failed_login_attempts")
+  lockedUntil         DateTime?  @map("locked_until") @db.Timestamptz(6)
+  mfaEnabled          Boolean    @default(false) @map("mfa_enabled")
+  emailVerifiedAt     DateTime?  @map("email_verified_at") @db.Timestamptz(6)
+  phoneVerifiedAt     DateTime?  @map("phone_verified_at") @db.Timestamptz(6)
+  createdAt           DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime   @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt           DateTime?  @map("deleted_at") @db.Timestamptz(6)
+  createdById         String?    @map("created_by_id") @db.Uuid
+  updatedById         String?    @map("updated_by_id") @db.Uuid
+
+  organization                       Organization?              @relation("User_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  createdBy                          User?                      @relation("User_createdBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  updatedBy                          User?                      @relation("User_updatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  park_managerUser                   Park[]                     @relation("Park_managerUser")
+  userRole_user                      UserRole[]                 @relation("UserRole_user")
+  userRole_grantedBy                 UserRole[]                 @relation("UserRole_grantedBy")
+  driver_user                        Driver?                    @relation("Driver_user")
+  driver_verifiedBy                  Driver[]                   @relation("Driver_verifiedBy")
+  driverDocument_verifiedBy          DriverDocument[]           @relation("DriverDocument_verifiedBy")
+  driverDocument_uploadedBy          DriverDocument[]           @relation("DriverDocument_uploadedBy")
+  driverStatusHistory_changedBy      DriverStatusHistory[]      @relation("DriverStatusHistory_changedBy")
+  driverDisciplinaryAction_issuedBy  DriverDisciplinaryAction[] @relation("DriverDisciplinaryAction_issuedBy")
+  conductor_user                     Conductor?                 @relation("Conductor_user")
+  vehicleDocument_verifiedBy         VehicleDocument[]          @relation("VehicleDocument_verifiedBy")
+  vehicleDocument_uploadedBy         VehicleDocument[]          @relation("VehicleDocument_uploadedBy")
+  vehicleOwnershipHistory_recordedBy VehicleOwnershipHistory[]  @relation("VehicleOwnershipHistory_recordedBy")
+  driverVehicleAssignment_assignedBy DriverVehicleAssignment[]  @relation("DriverVehicleAssignment_assignedBy")
+  vehicleCrewAssignment_assignedBy   VehicleCrewAssignment[]    @relation("VehicleCrewAssignment_assignedBy")
+  vehicleRouteAssignment_assignedBy  VehicleRouteAssignment[]   @relation("VehicleRouteAssignment_assignedBy")
+  vehicleQrCode_issuedBy             VehicleQrCode[]            @relation("VehicleQrCode_issuedBy")
+  complaint_assignedTo               Complaint[]                @relation("Complaint_assignedTo")
+  complaintUpdate_updatedBy          ComplaintUpdate[]          @relation("ComplaintUpdate_updatedBy")
+  incident_reporterUser              Incident[]                 @relation("Incident_reporterUser")
+  incident_assignedTo                Incident[]                 @relation("Incident_assignedTo")
+  incidentEvidence_uploadedBy        IncidentEvidence[]         @relation("IncidentEvidence_uploadedBy")
+  incidentUpdate_updatedBy           IncidentUpdate[]           @relation("IncidentUpdate_updatedBy")
+  lostPropertyCase_assignedTo        LostPropertyCase[]         @relation("LostPropertyCase_assignedTo")
+  lostPropertyUpdate_updatedBy       LostPropertyUpdate[]       @relation("LostPropertyUpdate_updatedBy")
+  notification_recipientUser         Notification[]             @relation("Notification_recipientUser")
+  auditLog_actorUser                 AuditLog[]                 @relation("AuditLog_actorUser")
+  securityEvent_user                 SecurityEvent[]            @relation("SecurityEvent_user")
+  systemSetting_updatedBy            SystemSetting[]            @relation("SystemSetting_updatedBy")
+  organization_createdBy             Organization[]             @relation("Organization_createdBy")
+  organization_updatedBy             Organization[]             @relation("Organization_updatedBy")
+  organizationSettings_createdBy     OrganizationSettings[]     @relation("OrganizationSettings_createdBy")
+  organizationSettings_updatedBy     OrganizationSettings[]     @relation("OrganizationSettings_updatedBy")
+  administrativeArea_createdBy       AdministrativeArea[]       @relation("AdministrativeArea_createdBy")
+  administrativeArea_updatedBy       AdministrativeArea[]       @relation("AdministrativeArea_updatedBy")
+  organizationUnit_createdBy         OrganizationUnit[]         @relation("OrganizationUnit_createdBy")
+  organizationUnit_updatedBy         OrganizationUnit[]         @relation("OrganizationUnit_updatedBy")
+  park_createdBy                     Park[]                     @relation("Park_createdBy")
+  park_updatedBy                     Park[]                     @relation("Park_updatedBy")
+  user_createdBy                     User[]                     @relation("User_createdBy")
+  user_updatedBy                     User[]                     @relation("User_updatedBy")
+  role_createdBy                     Role[]                     @relation("Role_createdBy")
+  role_updatedBy                     Role[]                     @relation("Role_updatedBy")
+  driver_createdBy                   Driver[]                   @relation("Driver_createdBy")
+  driver_updatedBy                   Driver[]                   @relation("Driver_updatedBy")
+  driverContact_createdBy            DriverContact[]            @relation("DriverContact_createdBy")
+  driverContact_updatedBy            DriverContact[]            @relation("DriverContact_updatedBy")
+  conductor_createdBy                Conductor[]                @relation("Conductor_createdBy")
+  conductor_updatedBy                Conductor[]                @relation("Conductor_updatedBy")
+  vehicleOwner_createdBy             VehicleOwner[]             @relation("VehicleOwner_createdBy")
+  vehicleOwner_updatedBy             VehicleOwner[]             @relation("VehicleOwner_updatedBy")
+  vehicle_createdBy                  Vehicle[]                  @relation("Vehicle_createdBy")
+  vehicle_updatedBy                  Vehicle[]                  @relation("Vehicle_updatedBy")
+  route_createdBy                    Route[]                    @relation("Route_createdBy")
+  route_updatedBy                    Route[]                    @relation("Route_updatedBy")
+  routeStop_createdBy                RouteStop[]                @relation("RouteStop_createdBy")
+  routeStop_updatedBy                RouteStop[]                @relation("RouteStop_updatedBy")
+  parkRoute_createdBy                ParkRoute[]                @relation("ParkRoute_createdBy")
+  parkRoute_updatedBy                ParkRoute[]                @relation("ParkRoute_updatedBy")
+
+  @@unique([organizationId, email])
+  @@unique([organizationId, phone])
+  @@unique([organizationId, id])
+  @@index([createdById])
+  @@index([updatedById])
+  @@map("users")
+}
+
+/// Null organizationId identifies platform roles or reusable system templates. Only an explicit PLATFORM grant confers platform scope. Phase 2: unique code WHERE organization_id IS NULL.
+model Role {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String?      @map("organization_id") @db.Uuid
+  code           String       @db.VarChar(64)
+  name           String       @db.VarChar(100)
+  description    String?      @db.Text
+  isSystem       Boolean      @default(false) @map("is_system")
+  status         RecordStatus @default(ACTIVE)
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt      DateTime?    @map("deleted_at") @db.Timestamptz(6)
+  createdById    String?      @map("created_by_id") @db.Uuid
+  updatedById    String?      @map("updated_by_id") @db.Uuid
+
+  organization        Organization?    @relation("Role_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  createdBy           User?            @relation("Role_createdBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  updatedBy           User?            @relation("Role_updatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  userRole_role       UserRole[]       @relation("UserRole_role")
+  rolePermission_role RolePermission[] @relation("RolePermission_role")
+
+  @@unique([organizationId, code])
+  @@index([createdById])
+  @@index([updatedById])
+  @@map("roles")
+}
+
+model Permission {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code        String   @unique @db.VarChar(100)
+  name        String   @db.VarChar(150)
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  rolePermission_permission RolePermission[] @relation("RolePermission_permission")
+
+  @@map("permissions")
+}
+
+/// Phase 2: CHECK scope shape (PLATFORM all scope IDs null; ORGANIZATION org only; UNIT org+unit; PARK org+park), tenant consistency and same-org role/user (or system role) triggers. Partial unique indexes prevent duplicate unrevoked open-ended grants per scope. Preserve expired/revoked grants.
+model UserRole {
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId     String?   @map("organization_id") @db.Uuid
+  scope              RoleScope @default(ORGANIZATION)
+  validFrom          DateTime  @default(now()) @map("valid_from") @db.Timestamptz(6)
+  validUntil         DateTime? @map("valid_until") @db.Timestamptz(6)
+  revokedAt          DateTime? @map("revoked_at") @db.Timestamptz(6)
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  userId             String    @map("user_id") @db.Uuid
+  roleId             String    @map("role_id") @db.Uuid
+  organizationUnitId String?   @map("organization_unit_id") @db.Uuid
+  parkId             String?   @map("park_id") @db.Uuid
+  grantedById        String?   @map("granted_by_id") @db.Uuid
+
+  organization     Organization?     @relation("UserRole_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  user             User              @relation("UserRole_user", fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  role             Role              @relation("UserRole_role", fields: [roleId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  organizationUnit OrganizationUnit? @relation("UserRole_organizationUnit", fields: [organizationUnitId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  park             Park?             @relation("UserRole_park", fields: [parkId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  grantedBy        User?             @relation("UserRole_grantedBy", fields: [grantedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([organizationId])
+  @@index([roleId])
+  @@index([organizationUnitId])
+  @@index([parkId])
+  @@index([grantedById])
+  @@index([userId, revokedAt, validUntil])
+  @@map("user_roles")
+}
+
+/// Scope is inherited from the role; permissions are global. Removing permission grants is audited.
+model RolePermission {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  roleId       String   @map("role_id") @db.Uuid
+  permissionId String   @map("permission_id") @db.Uuid
+
+  role       Role       @relation("RolePermission_role", fields: [roleId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  permission Permission @relation("RolePermission_permission", fields: [permissionId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([roleId, permissionId])
+  @@index([permissionId])
+  @@map("role_permissions")
+}
+
+model Driver {
+  id                  String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId      String             @map("organization_id") @db.Uuid
+  driverCode          String             @unique @map("driver_code") @db.VarChar(30)
+  firstName           String             @map("first_name") @db.VarChar(100)
+  middleName          String?            @map("middle_name") @db.VarChar(100)
+  lastName            String             @map("last_name") @db.VarChar(100)
+  dateOfBirth         DateTime?          @map("date_of_birth") @db.Date
+  gender              Gender             @default(NOT_DISCLOSED)
+  phone               String             @db.VarChar(32)
+  email               String?            @db.VarChar(254)
+  photoUrl            String?            @map("photo_url") @db.Text
+  residentialAddress  String?            @map("residential_address") @db.Text
+  /// Restricted encrypted reference; never expose through public verification.
+  nationalIdReference String?            @map("national_id_reference") @db.Text
+  driverLicenseNumber String?            @map("driver_license_number") @db.VarChar(100)
+  driverLicenseExpiry DateTime?          @map("driver_license_expiry") @db.Date
+  membershipNumber    String?            @map("membership_number") @db.VarChar(100)
+  registrationStatus  RegistrationStatus @default(PENDING) @map("registration_status")
+  complianceStatus    ComplianceStatus   @default(UNKNOWN) @map("compliance_status")
+  disciplinaryStatus  DisciplinaryStatus @default(CLEAR) @map("disciplinary_status")
+  joinedAt            DateTime           @default(now()) @map("joined_at") @db.Timestamptz(6)
+  verifiedAt          DateTime?          @map("verified_at") @db.Timestamptz(6)
+  createdAt           DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt           DateTime?          @map("deleted_at") @db.Timestamptz(6)
+  organizationUnitId  String?            @map("organization_unit_id") @db.Uuid
+  primaryParkId       String?            @map("primary_park_id") @db.Uuid
+  userId              String?            @unique @map("user_id") @db.Uuid
+  verifiedById        String?            @map("verified_by_id") @db.Uuid
+  createdById         String?            @map("created_by_id") @db.Uuid
+  updatedById         String?            @map("updated_by_id") @db.Uuid
+
+  organizationUnit                OrganizationUnit?          @relation("Driver_organizationUnit", fields: [organizationId, organizationUnitId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  primaryPark                     Park?                      @relation("Driver_primaryPark", fields: [organizationId, primaryParkId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  user                            User?                      @relation("Driver_user", fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  verifiedBy                      User?                      @relation("Driver_verifiedBy", fields: [verifiedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  organization                    Organization               @relation("Driver_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  createdBy                       User?                      @relation("Driver_createdBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  updatedBy                       User?                      @relation("Driver_updatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  driverContact_driver            DriverContact[]            @relation("DriverContact_driver")
+  driverDocument_driver           DriverDocument[]           @relation("DriverDocument_driver")
+  driverStatusHistory_driver      DriverStatusHistory[]      @relation("DriverStatusHistory_driver")
+  driverDisciplinaryAction_driver DriverDisciplinaryAction[] @relation("DriverDisciplinaryAction_driver")
+  vehicleOwner_driver             VehicleOwner[]             @relation("VehicleOwner_driver")
+  driverVehicleAssignment_driver  DriverVehicleAssignment[]  @relation("DriverVehicleAssignment_driver")
+  journey_driver                  Journey[]                  @relation("Journey_driver")
+  complaint_driver                Complaint[]                @relation("Complaint_driver")
+  incident_driver                 Incident[]                 @relation("Incident_driver")
+  lostPropertyCase_driver         LostPropertyCase[]         @relation("LostPropertyCase_driver")
+
+  @@unique([organizationId, id])
+  @@unique([organizationId, membershipNumber])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, organizationUnitId])
+  @@index([organizationId, primaryParkId])
+  @@index([userId])
+  @@index([verifiedById])
+  @@index([organizationId, registrationStatus])
+  @@index([organizationId, lastName, firstName])
+  @@index([createdById])
+  @@index([updatedById])
+  @@map("drivers")
+}
+
+/// Private contact data; never included in passenger verification responses.
+model DriverContact {
+  id             String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String      @map("organization_id") @db.Uuid
+  contactType    ContactType @map("contact_type")
+  name           String      @db.VarChar(200)
+  relationship   String?     @db.VarChar(100)
+  phone          String      @db.VarChar(32)
+  address        String?     @db.Text
+  isPrimary      Boolean     @default(false) @map("is_primary")
+  createdAt      DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt      DateTime?   @map("deleted_at") @db.Timestamptz(6)
+  driverId       String      @map("driver_id") @db.Uuid
+  createdById    String?     @map("created_by_id") @db.Uuid
+  updatedById    String?     @map("updated_by_id") @db.Uuid
+
+  driver       Driver       @relation("DriverContact_driver", fields: [organizationId, driverId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  organization Organization @relation("DriverContact_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  createdBy    User?        @relation("DriverContact_createdBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  updatedBy    User?        @relation("DriverContact_updatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([organizationId, id])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, driverId])
+  @@index([createdById])
+  @@index([updatedById])
+  @@map("driver_contacts")
+}
+
+model DriverDocument {
+  id                 String                     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId     String                     @map("organization_id") @db.Uuid
+  documentType       DriverDocumentType         @map("document_type")
+  documentNumber     String?                    @map("document_number") @db.VarChar(100)
+  issueDate          DateTime?                  @map("issue_date") @db.Date
+  expiryDate         DateTime?                  @map("expiry_date") @db.Date
+  /// Private object key, not a permanent public/signed URL; generate short-lived access URLs.
+  fileStorageKey     String                     @map("file_storage_key") @db.Text
+  mimeType           String?                    @map("mime_type") @db.VarChar(150)
+  fileSize           BigInt?                    @map("file_size")
+  checksum           String?                    @db.VarChar(128)
+  verificationStatus DocumentVerificationStatus @default(PENDING) @map("verification_status")
+  verifiedAt         DateTime?                  @map("verified_at") @db.Timestamptz(6)
+  rejectionReason    String?                    @map("rejection_reason") @db.Text
+  createdAt          DateTime                   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime                   @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt          DateTime?                  @map("deleted_at") @db.Timestamptz(6)
+  driverId           String                     @map("driver_id") @db.Uuid
+  verifiedById       String?                    @map("verified_by_id") @db.Uuid
+  uploadedById       String?                    @map("uploaded_by_id") @db.Uuid
+
+  driver       Driver       @relation("DriverDocument_driver", fields: [organizationId, driverId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  verifiedBy   User?        @relation("DriverDocument_verifiedBy", fields: [verifiedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  uploadedBy   User?        @relation("DriverDocument_uploadedBy", fields: [uploadedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  organization Organization @relation("DriverDocument_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([organizationId, id])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, driverId])
+  @@index([verifiedById])
+  @@index([uploadedById])
+  @@index([organizationId, verificationStatus, expiryDate], map: "driver_documents_organization_id_verificati_0fb37c2515fe")
+  @@map("driver_documents")
+}
+
+/// Append-only. Phase 2 CHECK: only the pair selected by dimension may be populated; its new value is required. Previous may be null for initial registration. Status mutation and history insertion are one transaction.
+model DriverStatusHistory {
+  id                         String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId             String                @map("organization_id") @db.Uuid
+  dimension                  DriverStatusDimension
+  previousRegistrationStatus RegistrationStatus?   @map("previous_registration_status")
+  newRegistrationStatus      RegistrationStatus?   @map("new_registration_status")
+  previousComplianceStatus   ComplianceStatus?     @map("previous_compliance_status")
+  newComplianceStatus        ComplianceStatus?     @map("new_compliance_status")
+  previousDisciplinaryStatus DisciplinaryStatus?   @map("previous_disciplinary_status")
+  newDisciplinaryStatus      DisciplinaryStatus?   @map("new_disciplinary_status")
+  reason                     String                @db.Text
+  changedAt                  DateTime              @default(now()) @map("changed_at") @db.Timestamptz(6)
+  createdAt                  DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
+  driverId                   String                @map("driver_id") @db.Uuid
+  changedById                String?               @map("changed_by_id") @db.Uuid
+
+  driver       Driver       @relation("DriverStatusHistory_driver", fields: [organizationId, driverId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  changedBy    User?        @relation("DriverStatusHistory_changedBy", fields: [changedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  organization Organization @relation("DriverStatusHistory_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([organizationId, id])
+  @@index([organizationId, createdAt])
+  @@index([changedById])
+  @@index([organizationId, driverId, changedAt(sort: Desc)], map: "driver_status_history_organization_id_drive_fed898914931")
+  @@map("driver_status_history")
+}
+
+model DriverDisciplinaryAction {
+  id             String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String                   @map("organization_id") @db.Uuid
+  actionType     DisciplinaryActionType   @map("action_type")
+  reason         String                   @db.Text
+  effectiveFrom  DateTime                 @map("effective_from") @db.Timestamptz(6)
+  effectiveUntil DateTime?                @map("effective_until") @db.Timestamptz(6)
+  status         DisciplinaryActionStatus @default(PENDING)
+  fineAmount     Decimal?                 @map("fine_amount") @db.Decimal(14, 2)
+  currency       String?                  @db.Char(3)
+  notes          String?                  @db.Text
+  createdAt      DateTime                 @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime                 @updatedAt @map("updated_at") @db.Timestamptz(6)
+  driverId       String                   @map("driver_id") @db.Uuid
+  issuedById     String                   @map("issued_by_id") @db.Uuid
+  parkId         String?                  @map("park_id") @db.Uuid
+  routeId        String?                  @map("route_id") @db.Uuid
+  incidentId     String?                  @map("incident_id") @db.Uuid
+
+  driver       Driver       @relation("DriverDisciplinaryAction_driver", fields: [organizationId, driverId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  issuedBy     User         @relation("DriverDisciplinaryAction_issuedBy", fields: [issuedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  park         Park?        @relation("DriverDisciplinaryAction_park", fields: [organizationId, parkId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  route        Route?       @relation("DriverDisciplinaryAction_route", fields: [organizationId, routeId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  incident     Incident?    @relation("DriverDisciplinaryAction_incident", fields: [organizationId, incidentId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  organization Organization @relation("DriverDisciplinaryAction_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([organizationId, id])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, driverId])
+  @@index([issuedById])
+  @@index([organizationId, parkId])
+  @@index([organizationId, routeId])
+  @@index([organizationId, incidentId])
+  @@map("driver_disciplinary_actions")
+}
+
+model Conductor {
+  id               String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId   String       @map("organization_id") @db.Uuid
+  conductorCode    String       @unique @map("conductor_code") @db.VarChar(30)
+  firstName        String       @map("first_name") @db.VarChar(100)
+  lastName         String       @map("last_name") @db.VarChar(100)
+  phone            String       @db.VarChar(32)
+  photoUrl         String?      @map("photo_url") @db.Text
+  membershipNumber String?      @map("membership_number") @db.VarChar(100)
+  status           RecordStatus @default(ACTIVE)
+  createdAt        DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt        DateTime?    @map("deleted_at") @db.Timestamptz(6)
+  primaryParkId    String?      @map("primary_park_id") @db.Uuid
+  userId           String?      @unique @map("user_id") @db.Uuid
+  createdById      String?      @map("created_by_id") @db.Uuid
+  updatedById      String?      @map("updated_by_id") @db.Uuid
+
+  primaryPark                     Park?                   @relation("Conductor_primaryPark", fields: [organizationId, primaryParkId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  user                            User?                   @relation("Conductor_user", fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  organization                    Organization            @relation("Conductor_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  createdBy                       User?                   @relation("Conductor_createdBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  updatedBy                       User?                   @relation("Conductor_updatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  vehicleCrewAssignment_conductor VehicleCrewAssignment[] @relation("VehicleCrewAssignment_conductor")
+
+  @@unique([organizationId, id])
+  @@unique([organizationId, membershipNumber])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, primaryParkId])
+  @@index([userId])
+  @@index([createdById])
+  @@index([updatedById])
+  @@map("conductors")
+}
+
+model VehicleOwner {
+  id                String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId    String       @map("organization_id") @db.Uuid
+  ownerType         OwnerType    @map("owner_type")
+  name              String       @db.VarChar(255)
+  phone             String?      @db.VarChar(32)
+  email             String?      @db.VarChar(254)
+  address           String?      @db.Text
+  identityReference String?      @map("identity_reference") @db.Text
+  status            RecordStatus @default(ACTIVE)
+  createdAt         DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt         DateTime?    @map("deleted_at") @db.Timestamptz(6)
+  driverId          String?      @map("driver_id") @db.Uuid
+  createdById       String?      @map("created_by_id") @db.Uuid
+  updatedById       String?      @map("updated_by_id") @db.Uuid
+
+  driver                        Driver?                   @relation("VehicleOwner_driver", fields: [organizationId, driverId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  organization                  Organization              @relation("VehicleOwner_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  createdBy                     User?                     @relation("VehicleOwner_createdBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  updatedBy                     User?                     @relation("VehicleOwner_updatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  vehicle_primaryOwner          Vehicle[]                 @relation("Vehicle_primaryOwner")
+  vehicleOwnershipHistory_owner VehicleOwnershipHistory[] @relation("VehicleOwnershipHistory_owner")
+
+  @@unique([organizationId, id])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, driverId])
+  @@index([organizationId, name])
+  @@index([createdById])
+  @@index([updatedById])
+  @@map("vehicle_owners")
+}
+
+/// primaryOwner is a current-state cache. Phase 2 trigger/transaction rules synchronize it with ownership history; no history is overwritten.
+model Vehicle {
+  id                 String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId     String                    @map("organization_id") @db.Uuid
+  vehicleCode        String                    @unique @map("vehicle_code") @db.VarChar(30)
+  /// Normalize plate number before writes; uniqueness intentionally survives soft deletion.
+  plateNumber        String                    @map("plate_number") @db.VarChar(32)
+  plateState         String?                   @map("plate_state") @db.VarChar(100)
+  plateCountryCode   String                    @default("NGA") @map("plate_country_code") @db.Char(3)
+  vehicleType        VehicleType               @map("vehicle_type")
+  make               String?                   @db.VarChar(100)
+  model              String?                   @db.VarChar(100)
+  year               Int?
+  colour             String?                   @db.VarChar(50)
+  passengerCapacity  Int                       @map("passenger_capacity")
+  chassisNumber      String?                   @map("chassis_number") @db.VarChar(100)
+  engineNumber       String?                   @map("engine_number") @db.VarChar(100)
+  registrationStatus VehicleRegistrationStatus @default(PENDING) @map("registration_status")
+  complianceStatus   ComplianceStatus          @default(UNKNOWN) @map("compliance_status")
+  createdAt          DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime                  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt          DateTime?                 @map("deleted_at") @db.Timestamptz(6)
+  primaryOwnerId     String?                   @map("primary_owner_id") @db.Uuid
+  primaryParkId      String?                   @map("primary_park_id") @db.Uuid
+  createdById        String?                   @map("created_by_id") @db.Uuid
+  updatedById        String?                   @map("updated_by_id") @db.Uuid
+
+  primaryOwner                    VehicleOwner?             @relation("Vehicle_primaryOwner", fields: [organizationId, primaryOwnerId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  primaryPark                     Park?                     @relation("Vehicle_primaryPark", fields: [organizationId, primaryParkId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  organization                    Organization              @relation("Vehicle_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  createdBy                       User?                     @relation("Vehicle_createdBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  updatedBy                       User?                     @relation("Vehicle_updatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  vehicleDocument_vehicle         VehicleDocument[]         @relation("VehicleDocument_vehicle")
+  vehicleOwnershipHistory_vehicle VehicleOwnershipHistory[] @relation("VehicleOwnershipHistory_vehicle")
+  driverVehicleAssignment_vehicle DriverVehicleAssignment[] @relation("DriverVehicleAssignment_vehicle")
+  vehicleCrewAssignment_vehicle   VehicleCrewAssignment[]   @relation("VehicleCrewAssignment_vehicle")
+  vehicleRouteAssignment_vehicle  VehicleRouteAssignment[]  @relation("VehicleRouteAssignment_vehicle")
+  vehicleQrCode_vehicle           VehicleQrCode[]           @relation("VehicleQrCode_vehicle")
+  verificationScan_vehicle        VerificationScan[]        @relation("VerificationScan_vehicle")
+  journey_vehicle                 Journey[]                 @relation("Journey_vehicle")
+  complaint_vehicle               Complaint[]               @relation("Complaint_vehicle")
+  incident_vehicle                Incident[]                @relation("Incident_vehicle")
+  lostPropertyCase_vehicle        LostPropertyCase[]        @relation("LostPropertyCase_vehicle")
+
+  @@unique([organizationId, id])
+  @@unique([organizationId, plateNumber])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, primaryOwnerId])
+  @@index([organizationId, primaryParkId])
+  @@index([plateNumber])
+  @@index([organizationId, registrationStatus])
+  @@index([createdById])
+  @@index([updatedById])
+  @@map("vehicles")
+}
+
+model VehicleDocument {
+  id                 String                     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId     String                     @map("organization_id") @db.Uuid
+  documentType       VehicleDocumentType        @map("document_type")
+  documentNumber     String?                    @map("document_number") @db.VarChar(100)
+  issueDate          DateTime?                  @map("issue_date") @db.Date
+  expiryDate         DateTime?                  @map("expiry_date") @db.Date
+  /// Private object key, not a permanent public/signed URL; generate short-lived access URLs.
+  fileStorageKey     String                     @map("file_storage_key") @db.Text
+  mimeType           String?                    @map("mime_type") @db.VarChar(150)
+  fileSize           BigInt?                    @map("file_size")
+  checksum           String?                    @db.VarChar(128)
+  verificationStatus DocumentVerificationStatus @default(PENDING) @map("verification_status")
+  verifiedAt         DateTime?                  @map("verified_at") @db.Timestamptz(6)
+  rejectionReason    String?                    @map("rejection_reason") @db.Text
+  createdAt          DateTime                   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime                   @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt          DateTime?                  @map("deleted_at") @db.Timestamptz(6)
+  vehicleId          String                     @map("vehicle_id") @db.Uuid
+  verifiedById       String?                    @map("verified_by_id") @db.Uuid
+  uploadedById       String?                    @map("uploaded_by_id") @db.Uuid
+
+  vehicle      Vehicle      @relation("VehicleDocument_vehicle", fields: [organizationId, vehicleId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  verifiedBy   User?        @relation("VehicleDocument_verifiedBy", fields: [verifiedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  uploadedBy   User?        @relation("VehicleDocument_uploadedBy", fields: [uploadedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  organization Organization @relation("VehicleDocument_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([organizationId, id])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, vehicleId])
+  @@index([verifiedById])
+  @@index([uploadedById])
+  @@index([organizationId, verificationStatus, expiryDate], map: "vehicle_documents_organization_id_verificat_5bd9105bd684")
+  @@map("vehicle_documents")
+}
+
+/// Phase 2: one current owner per vehicle WHERE end_date IS NULL AND status = ACTIVE; range exclusion prevents overlapping ownership intervals.
+model VehicleOwnershipHistory {
+  id             String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String          @map("organization_id") @db.Uuid
+  startDate      DateTime        @map("start_date") @db.Timestamptz(6)
+  endDate        DateTime?       @map("end_date") @db.Timestamptz(6)
+  status         OwnershipStatus @default(ACTIVE)
+  notes          String?         @db.Text
+  createdAt      DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
+  vehicleId      String          @map("vehicle_id") @db.Uuid
+  ownerId        String          @map("owner_id") @db.Uuid
+  recordedById   String?         @map("recorded_by_id") @db.Uuid
+
+  vehicle      Vehicle      @relation("VehicleOwnershipHistory_vehicle", fields: [organizationId, vehicleId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  owner        VehicleOwner @relation("VehicleOwnershipHistory_owner", fields: [organizationId, ownerId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  recordedBy   User?        @relation("VehicleOwnershipHistory_recordedBy", fields: [recordedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  organization Organization @relation("VehicleOwnershipHistory_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([organizationId, id])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, ownerId])
+  @@index([recordedById])
+  @@index([organizationId, vehicleId, startDate(sort: Desc)], map: "vehicle_ownership_history_organization_id_v_a78661d86dd3")
+  @@map("vehicle_ownership_history")
+}
+
+/// SQL UNIQUE(organization_id, vehicle_id) WHERE assignment_type = PRIMARY AND status = ACTIVE, regardless of end_at. Future hardening: tstzrange exclusion for overlapping PRIMARY periods. PRIMARY uniqueness does not forbid relief records.
+model DriverVehicleAssignment {
+  id             String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String           @map("organization_id") @db.Uuid
+  assignmentType AssignmentType   @default(PRIMARY) @map("assignment_type")
+  startAt        DateTime         @default(now()) @map("start_at") @db.Timestamptz(6)
+  endAt          DateTime?        @map("end_at") @db.Timestamptz(6)
+  status         AssignmentStatus @default(ACTIVE)
+  notes          String?          @db.Text
+  createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+  driverId       String           @map("driver_id") @db.Uuid
+  vehicleId      String           @map("vehicle_id") @db.Uuid
+  assignedById   String           @map("assigned_by_id") @db.Uuid
+
+  driver                            Driver             @relation("DriverVehicleAssignment_driver", fields: [organizationId, driverId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  vehicle                           Vehicle            @relation("DriverVehicleAssignment_vehicle", fields: [organizationId, vehicleId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  assignedBy                        User               @relation("DriverVehicleAssignment_assignedBy", fields: [assignedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  organization                      Organization       @relation("DriverVehicleAssignment_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  verificationScan_driverAssignment VerificationScan[] @relation("VerificationScan_driverAssignment")
+  journey_driverAssignment          Journey[]          @relation("Journey_driverAssignment")
+
+  @@unique([organizationId, id])
+  @@index([organizationId, createdAt])
+  @@index([assignedById])
+  @@index([organizationId, vehicleId, status, endAt], map: "driver_vehicle_assignments_organization_id__cadd3eb35d27")
+  @@index([organizationId, driverId, startAt(sort: Desc)], map: "driver_vehicle_assignments_organization_id__a137ad50397e")
+  @@map("driver_vehicle_assignments")
+}
+
+/// Phase 2: partial unique (organization_id, vehicle_id, conductor_id, crew_role) for ACTIVE open-ended rows; preserve historical rows.
+model VehicleCrewAssignment {
+  id             String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String           @map("organization_id") @db.Uuid
+  crewRole       CrewRole         @default(CONDUCTOR) @map("crew_role")
+  startAt        DateTime         @default(now()) @map("start_at") @db.Timestamptz(6)
+  endAt          DateTime?        @map("end_at") @db.Timestamptz(6)
+  status         AssignmentStatus @default(ACTIVE)
+  notes          String?          @db.Text
+  createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+  vehicleId      String           @map("vehicle_id") @db.Uuid
+  conductorId    String           @map("conductor_id") @db.Uuid
+  assignedById   String?          @map("assigned_by_id") @db.Uuid
+
+  vehicle      Vehicle      @relation("VehicleCrewAssignment_vehicle", fields: [organizationId, vehicleId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  conductor    Conductor    @relation("VehicleCrewAssignment_conductor", fields: [organizationId, conductorId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  assignedBy   User?        @relation("VehicleCrewAssignment_assignedBy", fields: [assignedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  organization Organization @relation("VehicleCrewAssignment_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([organizationId, id])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, vehicleId])
+  @@index([organizationId, conductorId])
+  @@index([assignedById])
+  @@map("vehicle_crew_assignments")
+}
+
+model Route {
+  id                       String                                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId           String                                    @map("organization_id") @db.Uuid
+  routeCode                String                                    @unique @map("route_code") @db.VarChar(30)
+  name                     String                                    @db.VarChar(255)
+  originName               String                                    @map("origin_name") @db.VarChar(255)
+  destinationName          String                                    @map("destination_name") @db.VarChar(255)
+  /// Phase 2: both endpoint GeoJSON Points -> geography(Point,4326), GiST indexes.
+  originLocation           Unsupported("geography(Point,4326)")?     @map("origin_location")
+  destinationLocation      Unsupported("geography(Point,4326)")?     @map("destination_location")
+  /// Phase 2: Native geometry(LineString,4326), GiST index.
+  routeGeometry            Unsupported("geometry(LineString,4326)")? @map("route_geometry")
+  distanceKm               Decimal?                                  @map("distance_km") @db.Decimal(10, 3)
+  estimatedDurationMinutes Int?                                      @map("estimated_duration_minutes")
+  status                   RecordStatus                              @default(ACTIVE)
+  createdAt                DateTime                                  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                DateTime                                  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt                DateTime?                                 @map("deleted_at") @db.Timestamptz(6)
+  createdById              String?                                   @map("created_by_id") @db.Uuid
+  updatedById              String?                                   @map("updated_by_id") @db.Uuid
+
+  organization                   Organization               @relation("Route_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  createdBy                      User?                      @relation("Route_createdBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  updatedBy                      User?                      @relation("Route_updatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  driverDisciplinaryAction_route DriverDisciplinaryAction[] @relation("DriverDisciplinaryAction_route")
+  routeStop_route                RouteStop[]                @relation("RouteStop_route")
+  parkRoute_route                ParkRoute[]                @relation("ParkRoute_route")
+  vehicleRouteAssignment_route   VehicleRouteAssignment[]   @relation("VehicleRouteAssignment_route")
+  journey_route                  Journey[]                  @relation("Journey_route")
+  incident_route                 Incident[]                 @relation("Incident_route")
+
+  @@unique([organizationId, id])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, status])
+  @@index([createdById])
+  @@index([updatedById])
+  @@map("routes")
+}
+
+/// Stop-order uniqueness includes deleted stops. Restore/reorder in a transaction; do not silently reuse positions.
+model RouteStop {
+  id                         String                                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId             String                                @map("organization_id") @db.Uuid
+  name                       String                                @db.VarChar(255)
+  /// Phase 2: GeoJSON Point -> geography(Point,4326), GiST index.
+  location                   Unsupported("geography(Point,4326)")?
+  stopOrder                  Int                                   @map("stop_order")
+  estimatedMinutesFromOrigin Int?                                  @map("estimated_minutes_from_origin")
+  status                     RecordStatus                          @default(ACTIVE)
+  createdAt                  DateTime                              @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                  DateTime                              @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt                  DateTime?                             @map("deleted_at") @db.Timestamptz(6)
+  routeId                    String                                @map("route_id") @db.Uuid
+  createdById                String?                               @map("created_by_id") @db.Uuid
+  updatedById                String?                               @map("updated_by_id") @db.Uuid
+
+  route        Route        @relation("RouteStop_route", fields: [organizationId, routeId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  organization Organization @relation("RouteStop_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  createdBy    User?        @relation("RouteStop_createdBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  updatedBy    User?        @relation("RouteStop_updatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([organizationId, id])
+  @@unique([routeId, stopOrder])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, routeId])
+  @@index([createdById])
+  @@index([updatedById])
+  @@map("route_stops")
+}
+
+model ParkRoute {
+  id             String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String        @map("organization_id") @db.Uuid
+  routeRole      ParkRouteRole @default(OPERATING) @map("route_role")
+  status         RecordStatus  @default(ACTIVE)
+  createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt      DateTime?     @map("deleted_at") @db.Timestamptz(6)
+  parkId         String        @map("park_id") @db.Uuid
+  routeId        String        @map("route_id") @db.Uuid
+  createdById    String?       @map("created_by_id") @db.Uuid
+  updatedById    String?       @map("updated_by_id") @db.Uuid
+
+  park         Park         @relation("ParkRoute_park", fields: [organizationId, parkId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  route        Route        @relation("ParkRoute_route", fields: [organizationId, routeId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  organization Organization @relation("ParkRoute_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  createdBy    User?        @relation("ParkRoute_createdBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  updatedBy    User?        @relation("ParkRoute_updatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([organizationId, id])
+  @@unique([parkId, routeId, routeRole])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, parkId])
+  @@index([organizationId, routeId])
+  @@index([createdById])
+  @@index([updatedById])
+  @@map("park_routes")
+}
+
+/// Multiple authorized routes per vehicle are allowed. Phase 2 partial unique (org,vehicle,route,park) for ACTIVE open-ended rows, with separate null-park predicate.
+model VehicleRouteAssignment {
+  id             String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String           @map("organization_id") @db.Uuid
+  startAt        DateTime         @default(now()) @map("start_at") @db.Timestamptz(6)
+  endAt          DateTime?        @map("end_at") @db.Timestamptz(6)
+  status         AssignmentStatus @default(ACTIVE)
+  notes          String?          @db.Text
+  createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+  vehicleId      String           @map("vehicle_id") @db.Uuid
+  routeId        String           @map("route_id") @db.Uuid
+  parkId         String?          @map("park_id") @db.Uuid
+  assignedById   String           @map("assigned_by_id") @db.Uuid
+
+  vehicle                          Vehicle            @relation("VehicleRouteAssignment_vehicle", fields: [organizationId, vehicleId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  route                            Route              @relation("VehicleRouteAssignment_route", fields: [organizationId, routeId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  park                             Park?              @relation("VehicleRouteAssignment_park", fields: [organizationId, parkId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  assignedBy                       User               @relation("VehicleRouteAssignment_assignedBy", fields: [assignedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  organization                     Organization       @relation("VehicleRouteAssignment_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  verificationScan_routeAssignment VerificationScan[] @relation("VerificationScan_routeAssignment")
+  journey_routeAssignment          Journey[]          @relation("Journey_routeAssignment")
+
+  @@unique([organizationId, id])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, routeId])
+  @@index([organizationId, parkId])
+  @@index([assignedById])
+  @@index([organizationId, vehicleId, status, endAt], map: "vehicle_route_assignments_organization_id_v_29342546d112")
+  @@map("vehicle_route_assignments")
+}
+
+/// SQL partial unique (organization_id, vehicle_id) WHERE status = ACTIVE. Rotation must change the old status before inserting its replacement. Check expiresAt at read time: time passing never updates enum status automatically.
+model VehicleQrCode {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId  String    @map("organization_id") @db.Uuid
+  /// SHA-256 hex of a cryptographically random public token. Never persist raw token.
+  publicTokenHash String    @unique @map("public_token_hash") @db.Char(64)
+  tokenVersion    Int       @default(1) @map("token_version")
+  issuedAt        DateTime  @default(now()) @map("issued_at") @db.Timestamptz(6)
+  expiresAt       DateTime? @map("expires_at") @db.Timestamptz(6)
+  revokedAt       DateTime? @map("revoked_at") @db.Timestamptz(6)
+  status          QrStatus  @default(ACTIVE)
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  vehicleId       String    @map("vehicle_id") @db.Uuid
+  issuedById      String    @map("issued_by_id") @db.Uuid
+
+  vehicle                 Vehicle            @relation("VehicleQrCode_vehicle", fields: [organizationId, vehicleId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  issuedBy                User               @relation("VehicleQrCode_issuedBy", fields: [issuedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  organization            Organization       @relation("VehicleQrCode_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  verificationScan_qrCode VerificationScan[] @relation("VerificationScan_qrCode")
+
+  @@unique([organizationId, id])
+  @@index([organizationId, createdAt])
+  @@index([issuedById])
+  @@index([organizationId, vehicleId, status])
+  @@index([expiresAt])
+  @@map("vehicle_qr_codes")
+}
+
+/// Global anonymous session; may later link to a passenger. Do not expose all sessions to tenant staff. Hash high-entropy tokens; never persist raw bearer secrets.
+model PassengerSession {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sessionTokenHash String    @unique @map("session_token_hash") @db.Char(64)
+  lastActivityAt   DateTime  @default(now()) @map("last_activity_at") @db.Timestamptz(6)
+  expiresAt        DateTime  @map("expires_at") @db.Timestamptz(6)
+  revokedAt        DateTime? @map("revoked_at") @db.Timestamptz(6)
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  passengerId      String?   @map("passenger_id") @db.Uuid
+
+  passenger                         Passenger?           @relation("PassengerSession_passenger", fields: [passengerId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  verificationScan_session          VerificationScan[]   @relation("VerificationScan_session")
+  journey_passengerSession          Journey[]            @relation("Journey_passengerSession")
+  complaint_passengerSession        Complaint[]          @relation("Complaint_passengerSession")
+  complaintUpdate_authorSession     ComplaintUpdate[]    @relation("ComplaintUpdate_authorSession")
+  incident_reporterSession          Incident[]           @relation("Incident_reporterSession")
+  incidentEvidence_uploaderSession  IncidentEvidence[]   @relation("IncidentEvidence_uploaderSession")
+  incidentUpdate_authorSession      IncidentUpdate[]     @relation("IncidentUpdate_authorSession")
+  lostPropertyCase_passengerSession LostPropertyCase[]   @relation("LostPropertyCase_passengerSession")
+  lostPropertyUpdate_authorSession  LostPropertyUpdate[] @relation("LostPropertyUpdate_authorSession")
+  securityEvent_passengerSession    SecurityEvent[]      @relation("SecurityEvent_passengerSession")
+
+  @@index([expiresAt])
+  @@index([passengerId])
+  @@map("passenger_sessions")
+}
+
+/// Global identity can interact with multiple organizations. Normalize email/phone. Soft deletion retains identifiers; privacy erasure requires a controlled anonymization/retention workflow.
+model Passenger {
+  id                  String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  firstName           String?         @map("first_name") @db.VarChar(100)
+  lastName            String?         @map("last_name") @db.VarChar(100)
+  phone               String?         @unique @db.VarChar(32)
+  email               String?         @unique @db.VarChar(254)
+  passwordHash        String?         @map("password_hash") @db.Text
+  externalAuthSubject String?         @unique @map("external_auth_subject") @db.VarChar(255)
+  status              PassengerStatus @default(ACTIVE)
+  phoneVerifiedAt     DateTime?       @map("phone_verified_at") @db.Timestamptz(6)
+  emailVerifiedAt     DateTime?       @map("email_verified_at") @db.Timestamptz(6)
+  createdAt           DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt           DateTime?       @map("deleted_at") @db.Timestamptz(6)
+
+  passengerSession_passenger         PassengerSession[]   @relation("PassengerSession_passenger")
+  trustedContact_passenger           TrustedContact[]     @relation("TrustedContact_passenger")
+  journey_passenger                  Journey[]            @relation("Journey_passenger")
+  complaint_passenger                Complaint[]          @relation("Complaint_passenger")
+  complaintUpdate_authorPassenger    ComplaintUpdate[]    @relation("ComplaintUpdate_authorPassenger")
+  incident_reporterPassenger         Incident[]           @relation("Incident_reporterPassenger")
+  incidentEvidence_uploaderPassenger IncidentEvidence[]   @relation("IncidentEvidence_uploaderPassenger")
+  incidentUpdate_authorPassenger     IncidentUpdate[]     @relation("IncidentUpdate_authorPassenger")
+  lostPropertyCase_passenger         LostPropertyCase[]   @relation("LostPropertyCase_passenger")
+  lostPropertyUpdate_authorPassenger LostPropertyUpdate[] @relation("LostPropertyUpdate_authorPassenger")
+  notification_recipientPassenger    Notification[]       @relation("Notification_recipientPassenger")
+  securityEvent_passenger            SecurityEvent[]      @relation("SecurityEvent_passenger")
+
+  @@map("passengers")
+}
+
+/// Phase 2 partial unique passenger_id WHERE is_primary AND deleted_at IS NULL.
+model TrustedContact {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name         String    @db.VarChar(200)
+  phone        String    @db.VarChar(32)
+  relationship String?   @db.VarChar(100)
+  isPrimary    Boolean   @default(false) @map("is_primary")
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt    DateTime? @map("deleted_at") @db.Timestamptz(6)
+  passengerId  String    @map("passenger_id") @db.Uuid
+
+  passenger                   Passenger      @relation("TrustedContact_passenger", fields: [passengerId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  journeyShare_trustedContact JourneyShare[] @relation("JourneyShare_trustedContact")
+
+  @@unique([passengerId, phone])
+  @@map("trusted_contacts")
+}
+
+/// Known QR scans belong to its organization. Unknown/unresolvable tokens have no trusted tenant and are recorded as a global SecurityEvent; never invent an organization. Phase 2 consistency triggers require QR and assignment vehicle IDs to match this vehicle. Snapshot result is immutable.
+model VerificationScan {
+  id                     String                                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId         String                                @map("organization_id") @db.Uuid
+  scannedAt              DateTime                              @default(now()) @map("scanned_at") @db.Timestamptz(6)
+  /// Phase 2: GeoJSON Point -> geography(Point,4326), GiST index.
+  location               Unsupported("geography(Point,4326)")?
+  locationAccuracyMeters Decimal?                              @map("location_accuracy_meters") @db.Decimal(10, 2)
+  deviceHash             String?                               @map("device_hash") @db.VarChar(128)
+  ipHash                 String?                               @map("ip_hash") @db.VarChar(128)
+  verificationResult     VerificationResult                    @map("verification_result")
+  userAgentSummary       String?                               @map("user_agent_summary") @db.VarChar(512)
+  createdAt              DateTime                              @default(now()) @map("created_at") @db.Timestamptz(6)
+  vehicleId              String                                @map("vehicle_id") @db.Uuid
+  qrCodeId               String                                @map("qr_code_id") @db.Uuid
+  sessionId              String?                               @map("session_id") @db.Uuid
+  driverAssignmentId     String?                               @map("driver_assignment_id") @db.Uuid
+  routeAssignmentId      String?                               @map("route_assignment_id") @db.Uuid
+
+  vehicle                  Vehicle                  @relation("VerificationScan_vehicle", fields: [organizationId, vehicleId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  qrCode                   VehicleQrCode            @relation("VerificationScan_qrCode", fields: [organizationId, qrCodeId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  session                  PassengerSession?        @relation("VerificationScan_session", fields: [sessionId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  driverAssignment         DriverVehicleAssignment? @relation("VerificationScan_driverAssignment", fields: [organizationId, driverAssignmentId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  routeAssignment          VehicleRouteAssignment?  @relation("VerificationScan_routeAssignment", fields: [organizationId, routeAssignmentId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  organization             Organization             @relation("VerificationScan_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  journey_verificationScan Journey[]                @relation("Journey_verificationScan")
+
+  @@unique([organizationId, id])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, vehicleId])
+  @@index([organizationId, qrCodeId])
+  @@index([sessionId])
+  @@index([organizationId, driverAssignmentId])
+  @@index([organizationId, routeAssignmentId])
+  @@index([vehicleId, scannedAt(sort: Desc)])
+  @@index([organizationId, scannedAt(sort: Desc)])
+  @@map("verification_scans")
+}
+
+/// Vehicle, driver and route are historical references. Phase 2 CHECK at least one of passenger/session; both allowed after login, with matching session owner. Consistency triggers validate driver+vehicle against driverAssignment and route+vehicle against routeAssignment; prevent later mutation of referenced assignment identities.
+model Journey {
+  id                 String                                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId     String                                @map("organization_id") @db.Uuid
+  journeyCode        String                                @unique @map("journey_code") @db.VarChar(30)
+  boardedAt          DateTime                              @default(now()) @map("boarded_at") @db.Timestamptz(6)
+  endedAt            DateTime?                             @map("ended_at") @db.Timestamptz(6)
+  /// Phase 2: both GeoJSON Points -> geography(Point,4326), GiST indexes.
+  boardingLocation   Unsupported("geography(Point,4326)")? @map("boarding_location")
+  endingLocation     Unsupported("geography(Point,4326)")? @map("ending_location")
+  status             JourneyStatus                         @default(BOARDED)
+  createdAt          DateTime                              @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime                              @updatedAt @map("updated_at") @db.Timestamptz(6)
+  passengerId        String?                               @map("passenger_id") @db.Uuid
+  passengerSessionId String?                               @map("passenger_session_id") @db.Uuid
+  vehicleId          String                                @map("vehicle_id") @db.Uuid
+  driverId           String?                               @map("driver_id") @db.Uuid
+  driverAssignmentId String?                               @map("driver_assignment_id") @db.Uuid
+  routeId            String?                               @map("route_id") @db.Uuid
+  routeAssignmentId  String?                               @map("route_assignment_id") @db.Uuid
+  boardingParkId     String?                               @map("boarding_park_id") @db.Uuid
+  verificationScanId String?                               @map("verification_scan_id") @db.Uuid
+
+  passenger                Passenger?               @relation("Journey_passenger", fields: [passengerId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  passengerSession         PassengerSession?        @relation("Journey_passengerSession", fields: [passengerSessionId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  vehicle                  Vehicle                  @relation("Journey_vehicle", fields: [organizationId, vehicleId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  driver                   Driver?                  @relation("Journey_driver", fields: [organizationId, driverId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  driverAssignment         DriverVehicleAssignment? @relation("Journey_driverAssignment", fields: [organizationId, driverAssignmentId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  route                    Route?                   @relation("Journey_route", fields: [organizationId, routeId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  routeAssignment          VehicleRouteAssignment?  @relation("Journey_routeAssignment", fields: [organizationId, routeAssignmentId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  boardingPark             Park?                    @relation("Journey_boardingPark", fields: [organizationId, boardingParkId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  verificationScan         VerificationScan?        @relation("Journey_verificationScan", fields: [organizationId, verificationScanId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  organization             Organization             @relation("Journey_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  journeyEvent_journey     JourneyEvent[]           @relation("JourneyEvent_journey")
+  journeyShare_journey     JourneyShare[]           @relation("JourneyShare_journey")
+  complaint_journey        Complaint[]              @relation("Complaint_journey")
+  incident_journey         Incident[]               @relation("Incident_journey")
+  lostPropertyCase_journey LostPropertyCase[]       @relation("LostPropertyCase_journey")
+
+  @@unique([organizationId, id])
+  @@index([organizationId, createdAt])
+  @@index([passengerSessionId])
+  @@index([organizationId, vehicleId])
+  @@index([organizationId, driverId])
+  @@index([organizationId, driverAssignmentId])
+  @@index([organizationId, routeId])
+  @@index([organizationId, routeAssignmentId])
+  @@index([organizationId, boardingParkId])
+  @@index([organizationId, verificationScanId])
+  @@index([vehicleId, boardedAt(sort: Desc)])
+  @@index([organizationId, status, boardedAt(sort: Desc)])
+  @@index([passengerId, boardedAt(sort: Desc)])
+  @@map("journeys")
+}
+
+model JourneyEvent {
+  id             String                                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String                                @map("organization_id") @db.Uuid
+  eventType      JourneyEventType                      @map("event_type")
+  eventTime      DateTime                              @default(now()) @map("event_time") @db.Timestamptz(6)
+  /// Phase 2: GeoJSON Point -> geography(Point,4326), GiST index.
+  location       Unsupported("geography(Point,4326)")?
+  metadata       Json?                                 @db.JsonB
+  createdAt      DateTime                              @default(now()) @map("created_at") @db.Timestamptz(6)
+  journeyId      String                                @map("journey_id") @db.Uuid
+
+  journey      Journey      @relation("JourneyEvent_journey", fields: [organizationId, journeyId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  organization Organization @relation("JourneyEvent_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([organizationId, id])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, journeyId, eventTime])
+  @@map("journey_events")
+}
+
+/// Share links are expiring bearer credentials; return a minimal public view. Phase 2 verify any trustedContact belongs to the journey passenger.
+model JourneyShare {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId   String    @map("organization_id") @db.Uuid
+  shareTokenHash   String    @unique @map("share_token_hash") @db.Char(64)
+  sharedWithName   String?   @map("shared_with_name") @db.VarChar(200)
+  sharedWithPhone  String?   @map("shared_with_phone") @db.VarChar(32)
+  expiresAt        DateTime  @map("expires_at") @db.Timestamptz(6)
+  revokedAt        DateTime? @map("revoked_at") @db.Timestamptz(6)
+  lastAccessedAt   DateTime? @map("last_accessed_at") @db.Timestamptz(6)
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  journeyId        String    @map("journey_id") @db.Uuid
+  trustedContactId String?   @map("trusted_contact_id") @db.Uuid
+
+  journey        Journey         @relation("JourneyShare_journey", fields: [organizationId, journeyId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  trustedContact TrustedContact? @relation("JourneyShare_trustedContact", fields: [trustedContactId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  organization   Organization    @relation("JourneyShare_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([organizationId, id])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, journeyId])
+  @@index([trustedContactId])
+  @@index([expiresAt])
+  @@map("journey_shares")
+}
+
+model Complaint {
+  id                 String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId     String            @map("organization_id") @db.Uuid
+  complaintCode      String            @unique @map("complaint_code") @db.VarChar(30)
+  category           ComplaintCategory
+  description        String            @db.Text
+  severity           Severity          @default(MEDIUM)
+  status             ComplaintStatus   @default(REPORTED)
+  reportedAt         DateTime          @default(now()) @map("reported_at") @db.Timestamptz(6)
+  resolvedAt         DateTime?         @map("resolved_at") @db.Timestamptz(6)
+  resolutionSummary  String?           @map("resolution_summary") @db.Text
+  createdAt          DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt          DateTime?         @map("deleted_at") @db.Timestamptz(6)
+  passengerId        String?           @map("passenger_id") @db.Uuid
+  passengerSessionId String?           @map("passenger_session_id") @db.Uuid
+  journeyId          String?           @map("journey_id") @db.Uuid
+  vehicleId          String?           @map("vehicle_id") @db.Uuid
+  driverId           String?           @map("driver_id") @db.Uuid
+  parkId             String?           @map("park_id") @db.Uuid
+  assignedToId       String?           @map("assigned_to_id") @db.Uuid
+
+  passenger                 Passenger?        @relation("Complaint_passenger", fields: [passengerId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  passengerSession          PassengerSession? @relation("Complaint_passengerSession", fields: [passengerSessionId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  journey                   Journey?          @relation("Complaint_journey", fields: [organizationId, journeyId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  vehicle                   Vehicle?          @relation("Complaint_vehicle", fields: [organizationId, vehicleId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  driver                    Driver?           @relation("Complaint_driver", fields: [organizationId, driverId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  park                      Park?             @relation("Complaint_park", fields: [organizationId, parkId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  assignedTo                User?             @relation("Complaint_assignedTo", fields: [assignedToId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  organization              Organization      @relation("Complaint_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  complaintUpdate_complaint ComplaintUpdate[] @relation("ComplaintUpdate_complaint")
+
+  @@unique([organizationId, id])
+  @@index([organizationId, createdAt])
+  @@index([passengerId])
+  @@index([passengerSessionId])
+  @@index([organizationId, journeyId])
+  @@index([organizationId, vehicleId])
+  @@index([organizationId, driverId])
+  @@index([organizationId, parkId])
+  @@index([assignedToId])
+  @@index([organizationId, status, reportedAt(sort: Desc)])
+  @@map("complaints")
+}
+
+/// Append-only; comment-only updates may omit statuses. Phase 2 CHECK status change or nonempty comment; enforce parent status transition transactionally.
+model ComplaintUpdate {
+  id                String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId    String           @map("organization_id") @db.Uuid
+  previousStatus    ComplaintStatus? @map("previous_status")
+  newStatus         ComplaintStatus? @map("new_status")
+  comment           String?          @db.Text
+  isInternal        Boolean          @default(true) @map("is_internal")
+  createdAt         DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  complaintId       String           @map("complaint_id") @db.Uuid
+  updatedById       String?          @map("updated_by_id") @db.Uuid
+  authorPassengerId String?          @map("author_passenger_id") @db.Uuid
+  authorSessionId   String?          @map("author_session_id") @db.Uuid
+
+  complaint       Complaint         @relation("ComplaintUpdate_complaint", fields: [organizationId, complaintId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  updatedBy       User?             @relation("ComplaintUpdate_updatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  authorPassenger Passenger?        @relation("ComplaintUpdate_authorPassenger", fields: [authorPassengerId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  authorSession   PassengerSession? @relation("ComplaintUpdate_authorSession", fields: [authorSessionId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  organization    Organization      @relation("ComplaintUpdate_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([organizationId, id])
+  @@index([organizationId, createdAt])
+  @@index([updatedById])
+  @@index([authorPassengerId])
+  @@index([authorSessionId])
+  @@index([organizationId, complaintId, createdAt], map: "complaint_updates_organization_id_complaint_b9e5e20ed44d")
+  @@map("complaint_updates")
+}
+
+model Incident {
+  id                  String                                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId      String                                @map("organization_id") @db.Uuid
+  incidentCode        String                                @unique @map("incident_code") @db.VarChar(30)
+  reporterType        ReporterType                          @map("reporter_type")
+  category            IncidentCategory
+  description         String                                @db.Text
+  severity            Severity                              @default(HIGH)
+  /// Phase 2: GeoJSON Point -> geography(Point,4326), GiST index.
+  location            Unsupported("geography(Point,4326)")?
+  reportedAt          DateTime                              @default(now()) @map("reported_at") @db.Timestamptz(6)
+  status              IncidentStatus                        @default(REPORTED)
+  resolvedAt          DateTime?                             @map("resolved_at") @db.Timestamptz(6)
+  resolution          String?                               @db.Text
+  createdAt           DateTime                              @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime                              @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt           DateTime?                             @map("deleted_at") @db.Timestamptz(6)
+  journeyId           String?                               @map("journey_id") @db.Uuid
+  vehicleId           String?                               @map("vehicle_id") @db.Uuid
+  driverId            String?                               @map("driver_id") @db.Uuid
+  parkId              String?                               @map("park_id") @db.Uuid
+  routeId             String?                               @map("route_id") @db.Uuid
+  reporterPassengerId String?                               @map("reporter_passenger_id") @db.Uuid
+  reporterSessionId   String?                               @map("reporter_session_id") @db.Uuid
+  reporterUserId      String?                               @map("reporter_user_id") @db.Uuid
+  assignedToId        String?                               @map("assigned_to_id") @db.Uuid
+
+  journey                           Journey?                   @relation("Incident_journey", fields: [organizationId, journeyId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  vehicle                           Vehicle?                   @relation("Incident_vehicle", fields: [organizationId, vehicleId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  driver                            Driver?                    @relation("Incident_driver", fields: [organizationId, driverId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  park                              Park?                      @relation("Incident_park", fields: [organizationId, parkId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  route                             Route?                     @relation("Incident_route", fields: [organizationId, routeId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  reporterPassenger                 Passenger?                 @relation("Incident_reporterPassenger", fields: [reporterPassengerId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  reporterSession                   PassengerSession?          @relation("Incident_reporterSession", fields: [reporterSessionId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  reporterUser                      User?                      @relation("Incident_reporterUser", fields: [reporterUserId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  assignedTo                        User?                      @relation("Incident_assignedTo", fields: [assignedToId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  organization                      Organization               @relation("Incident_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  driverDisciplinaryAction_incident DriverDisciplinaryAction[] @relation("DriverDisciplinaryAction_incident")
+  incidentEvidence_incident         IncidentEvidence[]         @relation("IncidentEvidence_incident")
+  incidentUpdate_incident           IncidentUpdate[]           @relation("IncidentUpdate_incident")
+
+  @@unique([organizationId, id])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, journeyId])
+  @@index([organizationId, vehicleId])
+  @@index([organizationId, driverId])
+  @@index([organizationId, parkId])
+  @@index([organizationId, routeId])
+  @@index([reporterPassengerId])
+  @@index([reporterSessionId])
+  @@index([reporterUserId])
+  @@index([assignedToId])
+  @@index([organizationId, status, severity, reportedAt(sort: Desc)])
+  @@map("incidents")
+}
+
+/// Phase 2 CHECK: TEXT requires textContent; media requires storage key, MIME, size, checksum. Private media access is authorized through its incident. Restrict update/delete to retention administration.
+model IncidentEvidence {
+  id                  String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId      String       @map("organization_id") @db.Uuid
+  evidenceType        EvidenceType @map("evidence_type")
+  /// Private object key. TEXT evidence instead uses textContent.
+  fileStorageKey      String?      @map("file_storage_key") @db.Text
+  textContent         String?      @map("text_content") @db.Text
+  mimeType            String?      @map("mime_type") @db.VarChar(150)
+  fileSize            BigInt?      @map("file_size")
+  checksum            String?      @db.VarChar(128)
+  uploadedAt          DateTime     @default(now()) @map("uploaded_at") @db.Timestamptz(6)
+  createdAt           DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  incidentId          String       @map("incident_id") @db.Uuid
+  uploadedById        String?      @map("uploaded_by_id") @db.Uuid
+  uploaderPassengerId String?      @map("uploader_passenger_id") @db.Uuid
+  uploaderSessionId   String?      @map("uploader_session_id") @db.Uuid
+
+  incident          Incident          @relation("IncidentEvidence_incident", fields: [organizationId, incidentId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  uploadedBy        User?             @relation("IncidentEvidence_uploadedBy", fields: [uploadedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  uploaderPassenger Passenger?        @relation("IncidentEvidence_uploaderPassenger", fields: [uploaderPassengerId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  uploaderSession   PassengerSession? @relation("IncidentEvidence_uploaderSession", fields: [uploaderSessionId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  organization      Organization      @relation("IncidentEvidence_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([organizationId, id])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, incidentId])
+  @@index([uploadedById])
+  @@index([uploaderPassengerId])
+  @@index([uploaderSessionId])
+  @@map("incident_evidence")
+}
+
+model IncidentUpdate {
+  id                String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId    String          @map("organization_id") @db.Uuid
+  previousStatus    IncidentStatus? @map("previous_status")
+  newStatus         IncidentStatus? @map("new_status")
+  comment           String?         @db.Text
+  isInternal        Boolean         @default(true) @map("is_internal")
+  createdAt         DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  incidentId        String          @map("incident_id") @db.Uuid
+  updatedById       String?         @map("updated_by_id") @db.Uuid
+  authorPassengerId String?         @map("author_passenger_id") @db.Uuid
+  authorSessionId   String?         @map("author_session_id") @db.Uuid
+
+  incident        Incident          @relation("IncidentUpdate_incident", fields: [organizationId, incidentId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  updatedBy       User?             @relation("IncidentUpdate_updatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  authorPassenger Passenger?        @relation("IncidentUpdate_authorPassenger", fields: [authorPassengerId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  authorSession   PassengerSession? @relation("IncidentUpdate_authorSession", fields: [authorSessionId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  organization    Organization      @relation("IncidentUpdate_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([organizationId, id])
+  @@index([organizationId, createdAt])
+  @@index([updatedById])
+  @@index([authorPassengerId])
+  @@index([authorSessionId])
+  @@index([organizationId, incidentId, createdAt])
+  @@map("incident_updates")
+}
+
+model LostPropertyCase {
+  id                 String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId     String               @map("organization_id") @db.Uuid
+  caseCode           String               @unique @map("case_code") @db.VarChar(30)
+  itemCategory       LostPropertyCategory @map("item_category")
+  itemDescription    String               @map("item_description") @db.Text
+  lostAt             DateTime?            @map("lost_at") @db.Timestamptz(6)
+  reportedAt         DateTime             @default(now()) @map("reported_at") @db.Timestamptz(6)
+  status             LostPropertyStatus   @default(REPORTED)
+  foundAt            DateTime?            @map("found_at") @db.Timestamptz(6)
+  returnedAt         DateTime?            @map("returned_at") @db.Timestamptz(6)
+  resolutionSummary  String?              @map("resolution_summary") @db.Text
+  createdAt          DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime             @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt          DateTime?            @map("deleted_at") @db.Timestamptz(6)
+  journeyId          String?              @map("journey_id") @db.Uuid
+  vehicleId          String?              @map("vehicle_id") @db.Uuid
+  driverId           String?              @map("driver_id") @db.Uuid
+  parkId             String?              @map("park_id") @db.Uuid
+  passengerId        String?              @map("passenger_id") @db.Uuid
+  passengerSessionId String?              @map("passenger_session_id") @db.Uuid
+  assignedToId       String?              @map("assigned_to_id") @db.Uuid
+
+  journey                             Journey?             @relation("LostPropertyCase_journey", fields: [organizationId, journeyId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  vehicle                             Vehicle?             @relation("LostPropertyCase_vehicle", fields: [organizationId, vehicleId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  driver                              Driver?              @relation("LostPropertyCase_driver", fields: [organizationId, driverId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  park                                Park?                @relation("LostPropertyCase_park", fields: [organizationId, parkId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  passenger                           Passenger?           @relation("LostPropertyCase_passenger", fields: [passengerId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  passengerSession                    PassengerSession?    @relation("LostPropertyCase_passengerSession", fields: [passengerSessionId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  assignedTo                          User?                @relation("LostPropertyCase_assignedTo", fields: [assignedToId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  organization                        Organization         @relation("LostPropertyCase_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  lostPropertyUpdate_lostPropertyCase LostPropertyUpdate[] @relation("LostPropertyUpdate_lostPropertyCase")
+
+  @@unique([organizationId, id])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, journeyId])
+  @@index([organizationId, vehicleId])
+  @@index([organizationId, driverId])
+  @@index([organizationId, parkId])
+  @@index([passengerId])
+  @@index([passengerSessionId])
+  @@index([assignedToId])
+  @@index([organizationId, status, reportedAt(sort: Desc)])
+  @@map("lost_property_cases")
+}
+
+model LostPropertyUpdate {
+  id                 String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId     String              @map("organization_id") @db.Uuid
+  previousStatus     LostPropertyStatus? @map("previous_status")
+  newStatus          LostPropertyStatus? @map("new_status")
+  comment            String?             @db.Text
+  isInternal         Boolean             @default(true) @map("is_internal")
+  createdAt          DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  lostPropertyCaseId String              @map("lost_property_case_id") @db.Uuid
+  updatedById        String?             @map("updated_by_id") @db.Uuid
+  authorPassengerId  String?             @map("author_passenger_id") @db.Uuid
+  authorSessionId    String?             @map("author_session_id") @db.Uuid
+
+  lostPropertyCase LostPropertyCase  @relation("LostPropertyUpdate_lostPropertyCase", fields: [organizationId, lostPropertyCaseId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict)
+  updatedBy        User?             @relation("LostPropertyUpdate_updatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  authorPassenger  Passenger?        @relation("LostPropertyUpdate_authorPassenger", fields: [authorPassengerId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  authorSession    PassengerSession? @relation("LostPropertyUpdate_authorSession", fields: [authorSessionId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  organization     Organization      @relation("LostPropertyUpdate_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([organizationId, id])
+  @@index([organizationId, createdAt])
+  @@index([updatedById])
+  @@index([authorPassengerId])
+  @@index([authorSessionId])
+  @@index([organizationId, lostPropertyCaseId, createdAt], map: "lost_property_updates_organization_id_lost__aa3b475bfd31")
+  @@map("lost_property_updates")
+}
+
+/// Typed recipient foreign keys replace unsafe polymorphic recipientId. Phase 2 CHECK exactly one recipient matching recipientType, and tenant user scope. Null organization is platform-originated. Workers use atomic claims/leases; never put secrets in metadata.
+model Notification {
+  id                   String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId       String?                   @map("organization_id") @db.Uuid
+  recipientType        NotificationRecipientType @map("recipient_type")
+  channel              NotificationChannel
+  notificationType     NotificationType          @map("notification_type")
+  title                String                    @db.VarChar(255)
+  message              String                    @db.Text
+  metadata             Json?                     @db.JsonB
+  status               NotificationStatus        @default(PENDING)
+  scheduledAt          DateTime                  @default(now()) @map("scheduled_at") @db.Timestamptz(6)
+  sentAt               DateTime?                 @map("sent_at") @db.Timestamptz(6)
+  deliveredAt          DateTime?                 @map("delivered_at") @db.Timestamptz(6)
+  readAt               DateTime?                 @map("read_at") @db.Timestamptz(6)
+  attemptCount         Int                       @default(0) @map("attempt_count")
+  nextAttemptAt        DateTime?                 @map("next_attempt_at") @db.Timestamptz(6)
+  lockedUntil          DateTime?                 @map("locked_until") @db.Timestamptz(6)
+  lastError            String?                   @map("last_error") @db.Text
+  providerMessageId    String?                   @map("provider_message_id") @db.VarChar(255)
+  idempotencyKey       String                    @unique @map("idempotency_key") @db.VarChar(128)
+  createdAt            DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime                  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  recipientUserId      String?                   @map("recipient_user_id") @db.Uuid
+  recipientPassengerId String?                   @map("recipient_passenger_id") @db.Uuid
+
+  organization       Organization? @relation("Notification_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  recipientUser      User?         @relation("Notification_recipientUser", fields: [recipientUserId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  recipientPassenger Passenger?    @relation("Notification_recipientPassenger", fields: [recipientPassengerId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([organizationId])
+  @@index([status, scheduledAt, nextAttemptAt])
+  @@index([recipientUserId, readAt, createdAt(sort: Desc)])
+  @@index([recipientPassengerId, readAt, createdAt(sort: Desc)])
+  @@map("notifications")
+}
+
+/// Append-only business audit. Phase 2 revoke UPDATE/DELETE for application role and enforce immutable trigger. Null org is a platform action. Redact passwords, bearer tokens, sensitive ID/contact/media data before persistence.
+model AuditLog {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String?  @map("organization_id") @db.Uuid
+  /// Extensible action code, e.g. DRIVER_SUSPENDED; not a lifecycle status.
+  action         String   @db.VarChar(100)
+  entityType     String   @map("entity_type") @db.VarChar(100)
+  /// Polymorphic historical identifier intentionally has no FK.
+  entityId       String?  @map("entity_id") @db.Uuid
+  previousData   Json?    @map("previous_data") @db.JsonB
+  newData        Json?    @map("new_data") @db.JsonB
+  ipHash         String?  @map("ip_hash") @db.VarChar(128)
+  deviceHash     String?  @map("device_hash") @db.VarChar(128)
+  requestId      String?  @map("request_id") @db.VarChar(128)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  actorUserId    String?  @map("actor_user_id") @db.Uuid
+
+  organization Organization? @relation("AuditLog_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  actorUser    User?         @relation("AuditLog_actorUser", fields: [actorUserId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([actorUserId])
+  @@index([organizationId, createdAt(sort: Desc)])
+  @@index([organizationId, entityType, entityId, createdAt(sort: Desc)], map: "audit_logs_organization_id_entity_type_enti_8c11e43bc46b")
+  @@map("audit_logs")
+}
+
+/// Append-only security audit; nullable identities permit unknown login/QR attempts. Phase 2 immutable permissions/triggers and retention policy.
+model SecurityEvent {
+  id                 String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId     String?           @map("organization_id") @db.Uuid
+  eventType          SecurityEventType @map("event_type")
+  severity           Severity          @default(LOW)
+  ipHash             String?           @map("ip_hash") @db.VarChar(128)
+  deviceHash         String?           @map("device_hash") @db.VarChar(128)
+  /// HMAC of submitted identity for failed/unknown logins, not raw credentials.
+  subjectHash        String?           @map("subject_hash") @db.VarChar(128)
+  userAgentSummary   String?           @map("user_agent_summary") @db.VarChar(512)
+  requestId          String?           @map("request_id") @db.VarChar(128)
+  metadata           Json?             @db.JsonB
+  createdAt          DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  userId             String?           @map("user_id") @db.Uuid
+  passengerId        String?           @map("passenger_id") @db.Uuid
+  passengerSessionId String?           @map("passenger_session_id") @db.Uuid
+
+  organization     Organization?     @relation("SecurityEvent_organization", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  user             User?             @relation("SecurityEvent_user", fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  passenger        Passenger?        @relation("SecurityEvent_passenger", fields: [passengerId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  passengerSession PassengerSession? @relation("SecurityEvent_passengerSession", fields: [passengerSessionId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([passengerId])
+  @@index([passengerSessionId])
+  @@index([organizationId, eventType, createdAt(sort: Desc)])
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("security_events")
+}
+
+/// Platform-only, non-secret configuration; store secret references in a vault instead of credentials here. Phase 2 validate JSON type against valueType.
+model SystemSetting {
+  id          String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  key         String           @unique @db.VarChar(150)
+  value       Json             @db.JsonB
+  valueType   SettingValueType @default(JSON) @map("value_type")
+  description String?          @db.Text
+  createdAt   DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+  updatedById String?          @map("updated_by_id") @db.Uuid
+
+  updatedBy User? @relation("SystemSetting_updatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([updatedById])
+  @@map("system_settings")
+}
